@@ -7,7 +7,7 @@ import { Pencil, Trash2, Plus, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
-export const Route = createFileRoute("/_authenticated/admin/resources")({
+export const Route = createFileRoute("/_authenticated/admin/resources/")({
   head: () => ({ meta: [{ title: "Resources — Dock Admin" }, { name: "robots", content: "noindex" }] }),
   component: AdminResources,
 });
