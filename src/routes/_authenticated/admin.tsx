@@ -59,11 +59,11 @@ function AdminLayout() {
     );
   }
 
-  const items = [
+  const items: Array<{ to: "/admin" | "/admin/resources" | "/admin/leads"; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/admin/resources", label: "Resources", icon: FileText },
     { to: "/admin/leads", label: "Leads", icon: Users },
-  ] as const;
+  ];
 
   return (
     <div className="flex min-h-screen bg-canvas">
