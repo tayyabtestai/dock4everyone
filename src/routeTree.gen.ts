@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -22,6 +23,11 @@ import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
 import { Route as AuthenticatedAdminResourcesIdRouteImport } from './routes/_authenticated/admin.resources.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/resource/$slug': typeof ResourceSlugRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/resource/$slug': typeof ResourceSlugRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/resource/$slug': typeof ResourceSlugRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/resources'
+    | '/sitemap.xml'
     | '/admin'
     | '/resource/$slug'
     | '/admin/leads'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/resources'
+    | '/sitemap.xml'
     | '/resource/$slug'
     | '/admin/leads'
     | '/admin'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/resources'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/resource/$slug'
     | '/_authenticated/admin/leads'
@@ -178,12 +190,20 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   ResourcesRoute: typeof ResourcesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   ResourceSlugRoute: typeof ResourceSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resources': {
       id: '/resources'
       path: '/resources'
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   ResourcesRoute: ResourcesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   ResourceSlugRoute: ResourceSlugRoute,
 }
