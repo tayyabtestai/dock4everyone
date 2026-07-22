@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
       { title: "Dock — Free Resources, Better Learning" },
       { name: "description", content: "A quiet archive of curated PDFs, repositories, guides, and AI frameworks for the modern practitioner. No noise, just utility." },
       { property: "og:title", content: "Dock — Free Resources, Better Learning" },
-      { property: "og:description", content: "Curated PDFs, repositories, guides, and AI frameworks — free." },
+      { property: "og:description", content: "A quiet archive of curated PDFs, repositories, guides, and AI frameworks for the modern practitioner. No noise, just utility." },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(featuredQuery),
