@@ -14,16 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device: string | null
+          email: string
+          full_name: string
+          id: string
+          ip_address: string | null
+          phone: string | null
+          platform: string
+          resource_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          email: string
+          full_name: string
+          id?: string
+          ip_address?: string | null
+          phone?: string | null
+          platform: string
+          resource_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          ip_address?: string | null
+          phone?: string | null
+          platform?: string
+          resource_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          button_text: string
+          category: string
+          created_at: string
+          description: string
+          external_url: string | null
+          file_path: string | null
+          id: string
+          resource_type: Database["public"]["Enums"]["resource_type"]
+          slug: string
+          status: Database["public"]["Enums"]["resource_status"]
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          button_text?: string
+          category?: string
+          created_at?: string
+          description?: string
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          resource_type: Database["public"]["Enums"]["resource_type"]
+          slug: string
+          status?: Database["public"]["Enums"]["resource_status"]
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          button_text?: string
+          category?: string
+          created_at?: string
+          description?: string
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          resource_type?: Database["public"]["Enums"]["resource_type"]
+          slug?: string
+          status?: Database["public"]["Enums"]["resource_status"]
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
+      resource_status: "draft" | "published"
+      resource_type: "pdf" | "image" | "video" | "github" | "drive" | "website"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +276,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+      resource_status: ["draft", "published"],
+      resource_type: ["pdf", "image", "video", "github", "drive", "website"],
+    },
   },
 } as const
