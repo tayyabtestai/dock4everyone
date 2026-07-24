@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://dvkigugwfyvmzvceatqr.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "dock-mcp",
+      "version": "0.1.0",
+      "title": "Dock"
+    },
+    "tools": [
+      {
+        "name": "list_resources",
+        "title": "List resources",
+        "description": "List Dock resources (published and drafts). Filter by status or category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by status",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "category": {
+              "description": "Filter by category",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_resource",
+        "title": "Get resource",
+        "description": "Fetch one resource by id or slug, including file_path and external_url.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "slug": {
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_leads",
+        "title": "List leads",
+        "description": "List captured leads. Filter by resource, platform, and date range.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "platform": {
+              "type": "string"
+            },
+            "since": {
+              "description": "ISO8601 lower bound on created_at",
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+            },
+            "limit": {
+              "default": 100,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "dashboard_stats",
+        "title": "Dashboard stats",
+        "description": "Totals for resources and leads, plus leads captured today.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_resource",
+        "title": "Create resource",
+        "description": "Create a new Dock resource. For file-based types, upload the file via the admin UI first and pass its file_path.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[a-z0-9-]+$"
+            },
+            "description": {
+              "default": "",
+              "type": "string",
+              "maxLength": 2000
+            },
+            "category": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "thumbnail_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "resource_type": {
+              "type": "string",
+              "enum": [
+                "pdf",
+                "image",
+                "video",
+                "github",
+                "drive",
+                "website"
+              ]
+            },
+            "button_text": {
+              "default": "Get Resource",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "file_path": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "external_url": {
+              "type": "string",
+              "maxLength": 1000,
+              "format": "uri"
+            }
+          },
+          "required": [
+            "title",
+            "slug",
+            "category",
+            "resource_type",
+            "status"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_resource",
+        "title": "Update resource",
+        "description": "Update an existing resource. Set status to 'published' or 'draft' to publish/unpublish.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[a-z0-9-]+$"
+            },
+            "description": {
+              "default": "",
+              "type": "string",
+              "maxLength": 2000
+            },
+            "category": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "thumbnail_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "resource_type": {
+              "type": "string",
+              "enum": [
+                "pdf",
+                "image",
+                "video",
+                "github",
+                "drive",
+                "website"
+              ]
+            },
+            "button_text": {
+              "default": "Get Resource",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "file_path": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "external_url": {
+              "type": "string",
+              "maxLength": 1000,
+              "format": "uri"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "delete_resource",
+        "title": "Delete resource",
+        "description": "Delete a resource. Also removes its stored file, if any.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_signed_url",
+        "title": "Create signed file URL",
+        "description": "Return a short-lived signed URL for a resource's stored file (pdf/image/video).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "expires_in_seconds": {
+              "default": 600,
+              "type": "integer",
+              "minimum": 60,
+              "maximum": 3600
+            }
+          },
+          "required": [
+            "resource_id"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
