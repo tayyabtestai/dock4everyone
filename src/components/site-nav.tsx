@@ -34,12 +34,6 @@ export function SiteNav() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            to="/auth"
-            className="hidden rounded-full border border-border bg-white px-3 py-1.5 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-secondary md:inline-flex"
-          >
-            Admin
-          </Link>
           <button
             aria-label="Toggle menu"
             className="grid h-9 w-9 place-items-center rounded-full border border-border bg-white md:hidden"
@@ -62,13 +56,6 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <Link
-              to="/auth"
-              onClick={() => setOpen(false)}
-              className="rounded-md px-2 py-2 text-sm font-medium text-accent"
-            >
-              Admin
-            </Link>
           </div>
         </div>
       )}
