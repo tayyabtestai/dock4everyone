@@ -26,6 +26,7 @@ import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authentic
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
+import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
 import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
 import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
@@ -119,6 +120,12 @@ const AuthenticatedAdminResourcesIndexRoute =
     path: '/resources/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCrmIndexRoute =
+  AuthenticatedAdminCrmIndexRouteImport.update({
+    id: '/crm/',
+    path: '/crm/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesNewRoute =
   AuthenticatedAdminResourcesNewRouteImport.update({
     id: '/resources/new',
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -185,6 +193,7 @@ export interface FileRoutesByTo {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
 }
 export interface FileRoutesById {
@@ -209,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
 export interface FileRouteTypes {
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/crm/'
     | '/admin/resources/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/crm'
     | '/admin/resources'
   id:
     | '__root__'
@@ -277,6 +289,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/resources/categories'
     | '/_authenticated/admin/resources/drafts'
     | '/_authenticated/admin/resources/new'
+    | '/_authenticated/admin/crm/'
     | '/_authenticated/admin/resources/'
   fileRoutesById: FileRoutesById
 }
@@ -417,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourcesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/crm/': {
+      id: '/_authenticated/admin/crm/'
+      path: '/crm'
+      fullPath: '/admin/crm/'
+      preLoaderRoute: typeof AuthenticatedAdminCrmIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/resources/new': {
       id: '/_authenticated/admin/resources/new'
       path: '/resources/new'
@@ -455,6 +475,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
   AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
+  AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
 }
 
@@ -467,6 +488,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourcesDraftsRoute:
     AuthenticatedAdminResourcesDraftsRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
+  AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
 }
 
