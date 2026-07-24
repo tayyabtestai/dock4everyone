@@ -27,6 +27,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
+import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
 import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
 import { Route as AuthenticatedAdminResourcesIdRouteImport } from './routes/_authenticated/admin.resources.$id'
 
@@ -124,6 +125,12 @@ const AuthenticatedAdminResourcesNewRoute =
     path: '/resources/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminResourcesDraftsRoute =
+  AuthenticatedAdminResourcesDraftsRouteImport.update({
+    id: '/resources/drafts',
+    path: '/resources/drafts',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesCategoriesRoute =
   AuthenticatedAdminResourcesCategoriesRouteImport.update({
     id: '/resources/categories',
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
+  '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
+  '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -198,6 +207,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
   '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
+  '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/resources/$id'
     | '/admin/resources/categories'
+    | '/admin/resources/drafts'
     | '/admin/resources/new'
     | '/admin/resources/'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/resources/$id'
     | '/admin/resources/categories'
+    | '/admin/resources/drafts'
     | '/admin/resources/new'
     | '/admin/resources'
   id:
@@ -263,6 +275,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/resources/$id'
     | '/_authenticated/admin/resources/categories'
+    | '/_authenticated/admin/resources/drafts'
     | '/_authenticated/admin/resources/new'
     | '/_authenticated/admin/resources/'
   fileRoutesById: FileRoutesById
@@ -411,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourcesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/resources/drafts': {
+      id: '/_authenticated/admin/resources/drafts'
+      path: '/resources/drafts'
+      fullPath: '/admin/resources/drafts'
+      preLoaderRoute: typeof AuthenticatedAdminResourcesDraftsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/resources/categories': {
       id: '/_authenticated/admin/resources/categories'
       path: '/resources/categories'
@@ -433,6 +453,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminResourcesIdRoute: typeof AuthenticatedAdminResourcesIdRoute
   AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
+  AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -443,6 +464,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourcesIdRoute: AuthenticatedAdminResourcesIdRoute,
   AuthenticatedAdminResourcesCategoriesRoute:
     AuthenticatedAdminResourcesCategoriesRoute,
+  AuthenticatedAdminResourcesDraftsRoute:
+    AuthenticatedAdminResourcesDraftsRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
 }
