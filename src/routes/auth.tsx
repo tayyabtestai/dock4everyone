@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Loader2, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>): { next?: string } =>
+    typeof s.next === "string" && s.next ? { next: s.next } : {},
   head: () => ({
     meta: [
       { title: "Admin — Dock" },
@@ -15,8 +17,16 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+function safeNext(raw: string): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const returnTo = safeNext(next ?? "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,22 +34,31 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin", replace: true });
+      if (data.session) {
+        if (returnTo) window.location.replace(returnTo);
+        else navigate({ to: "/admin", replace: true });
+      }
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) navigate({ to: "/admin", replace: true });
+      if (session) {
+        if (returnTo) window.location.replace(returnTo);
+        else navigate({ to: "/admin", replace: true });
+      }
     });
     return () => { sub.subscription.unsubscribe(); };
-  }, [navigate]);
+  }, [navigate, returnTo]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
       if (mode === "signup") {
+        const emailRedirectTo = returnTo
+          ? window.location.origin + returnTo
+          : window.location.origin + "/admin";
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo },
         });
         if (error) throw error;
         toast.success("Account created", { description: "Ask the workspace owner to grant you admin access." });
