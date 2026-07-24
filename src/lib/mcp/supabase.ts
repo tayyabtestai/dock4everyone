@@ -33,7 +33,7 @@ export async function assertAdmin(ctx: ToolContext) {
   if (!ctx.isAuthenticated()) throw new Error("Not authenticated");
   const sb = supabaseForUser(ctx);
   const { data, error } = await sb.rpc("has_role", {
-    _user_id: ctx.getUserId(),
+    _user_id: ctx.getUserId() as string,
     _role: "admin",
   });
   if (error) throw new Error(error.message);
