@@ -1,0 +1,6 @@
+-- Lock down SECURITY DEFINER function execution to only the roles that need it.
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+
+REVOKE ALL ON FUNCTION public.tg_grant_first_admin() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.tg_set_updated_at() FROM PUBLIC, anon, authenticated;
