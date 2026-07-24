@@ -15,7 +15,6 @@ import {
   PanelLeftOpen,
   Menu,
   X,
-  Moon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -330,6 +329,3 @@ function NavGroup({
     </div>
   );
 }
-
-// Unused import guard for tree-shaking readability
-void Moon;
