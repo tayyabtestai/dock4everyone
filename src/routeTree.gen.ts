@@ -27,6 +27,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
+import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
 import { Route as AuthenticatedAdminResourcesIdRouteImport } from './routes/_authenticated/admin.resources.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -123,6 +124,12 @@ const AuthenticatedAdminResourcesNewRoute =
     path: '/resources/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminResourcesCategoriesRoute =
+  AuthenticatedAdminResourcesCategoriesRouteImport.update({
+    id: '/resources/categories',
+    path: '/resources/categories',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesIdRoute =
   AuthenticatedAdminResourcesIdRouteImport.update({
     id: '/resources/$id',
@@ -147,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
+  '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
+  '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
+  '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/'
     | '/admin/resources/$id'
+    | '/admin/resources/categories'
     | '/admin/resources/new'
     | '/admin/resources/'
   fileRoutesByTo: FileRoutesByTo
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin'
     | '/admin/resources/$id'
+    | '/admin/resources/categories'
     | '/admin/resources/new'
     | '/admin/resources'
   id:
@@ -250,6 +262,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/resources/$id'
+    | '/_authenticated/admin/resources/categories'
     | '/_authenticated/admin/resources/new'
     | '/_authenticated/admin/resources/'
   fileRoutesById: FileRoutesById
@@ -398,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourcesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/resources/categories': {
+      id: '/_authenticated/admin/resources/categories'
+      path: '/resources/categories'
+      fullPath: '/admin/resources/categories'
+      preLoaderRoute: typeof AuthenticatedAdminResourcesCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/resources/$id': {
       id: '/_authenticated/admin/resources/$id'
       path: '/resources/$id'
@@ -412,6 +432,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminResourcesIdRoute: typeof AuthenticatedAdminResourcesIdRoute
+  AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
 }
@@ -420,6 +441,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminResourcesIdRoute: AuthenticatedAdminResourcesIdRoute,
+  AuthenticatedAdminResourcesCategoriesRoute:
+    AuthenticatedAdminResourcesCategoriesRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
 }
