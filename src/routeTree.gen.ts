@@ -31,6 +31,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminEmailIndexRouteImport } from './routes/_authenticated/admin.email.index'
 import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
+import { Route as AuthenticatedAdminAssessmentsIndexRouteImport } from './routes/_authenticated/admin.assessments.index'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
 import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
 import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
@@ -166,6 +167,12 @@ const AuthenticatedAdminCrmIndexRoute =
     path: '/crm/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAssessmentsIndexRoute =
+  AuthenticatedAdminAssessmentsIndexRouteImport.update({
+    id: '/assessments/',
+    path: '/assessments/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesNewRoute =
   AuthenticatedAdminResourcesNewRouteImport.update({
     id: '/resources/new',
@@ -298,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/assessments/': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -336,6 +344,7 @@ export interface FileRoutesByTo {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/assessments': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
@@ -377,6 +386,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/_authenticated/admin/assessments/': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/_authenticated/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/assessments/'
     | '/admin/crm/'
     | '/admin/email/'
     | '/admin/resources/'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/assessments'
     | '/admin/crm'
     | '/admin/email'
     | '/admin/resources'
@@ -496,6 +508,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/resources/categories'
     | '/_authenticated/admin/resources/drafts'
     | '/_authenticated/admin/resources/new'
+    | '/_authenticated/admin/assessments/'
     | '/_authenticated/admin/crm/'
     | '/_authenticated/admin/email/'
     | '/_authenticated/admin/resources/'
@@ -673,6 +686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCrmIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/assessments/': {
+      id: '/_authenticated/admin/assessments/'
+      path: '/assessments'
+      fullPath: '/admin/assessments/'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/resources/new': {
       id: '/_authenticated/admin/resources/new'
       path: '/resources/new'
@@ -825,6 +845,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
   AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
+  AuthenticatedAdminAssessmentsIndexRoute: typeof AuthenticatedAdminAssessmentsIndexRoute
   AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
   AuthenticatedAdminEmailIndexRoute: typeof AuthenticatedAdminEmailIndexRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
@@ -851,6 +872,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourcesDraftsRoute:
     AuthenticatedAdminResourcesDraftsRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
+  AuthenticatedAdminAssessmentsIndexRoute:
+    AuthenticatedAdminAssessmentsIndexRoute,
   AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
   AuthenticatedAdminEmailIndexRoute: AuthenticatedAdminEmailIndexRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
