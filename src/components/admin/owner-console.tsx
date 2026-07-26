@@ -15,6 +15,7 @@ import {
   PanelLeftOpen,
   Menu,
   X,
+  ClipboardList,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -53,6 +54,15 @@ const NAV: Item[] = [
     ],
   },
   { kind: "leaf", to: "/admin/pipeline", label: "Pipeline", icon: GitBranch },
+  {
+    kind: "group", key: "assessments", label: "Assessment Engine", icon: ClipboardList, to: "/admin/assessments",
+    children: [
+      { to: "/admin/assessments", label: "All Assessments" },
+      { to: "/admin/assessments/new", label: "New Assessment" },
+      { to: "/admin/assessments/templates", label: "Templates" },
+      { to: "/admin/assessments/analytics", label: "Analytics" },
+    ],
+  },
   {
     kind: "group", key: "email", label: "Email", icon: Mail, to: "/admin/email",
     children: [

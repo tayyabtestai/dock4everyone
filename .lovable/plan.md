@@ -1,67 +1,113 @@
-## Goal
+## Assessment Engine — scope
 
-Expose Dock's admin capabilities to Claude via a custom MCP server, secured with owner-only OAuth. Uses `@lovable.dev/mcp-js` mounted at `/mcp` with Supabase OAuth 2.1 as the authorization server.
+A new Owner Console module. One engine, N assessments. Public pages live only at `/assessment/$slug` (never linked from the site). No changes to existing modules, layouts, or the public site.
 
-## Backend inventory (already delivered above)
+## Database (Lovable Cloud migration)
 
-- REST endpoints: only `GET /sitemap.xml`.
-- Edge functions: none.
-- Server functions (RPC): `captureLeadAndUnlock` (public), `upsertResource` + `deleteResource` (admin).
-- Frontend-only actions: browse resources, admin list resources/leads, storage uploads, auth — all direct supabase-js with RLS.
-- Auth model: admin gate via `has_role(uid,'admin')` on `user_roles`.
+Four new tables in `public`, with GRANTs + RLS in the same migration.
 
-## MCP tools to expose (owner-only via OAuth)
+- `assessments` — one row per assessment
+  - `id uuid pk`, `slug text unique not null`, `name text`, `industry text`,
+    `status assessment_status default 'draft'` (enum: draft/published/archived),
+    `headline`, `subheadline`, `description`, `estimated_minutes int`,
+    `primary_cta_label`, `primary_cta_url`, `secondary_cta_label`, `secondary_cta_url`,
+    `seo_title`, `seo_description`, `featured_image_url`, `og_image_url`,
+    `questions jsonb default '[]'` — ordered array of question configs
+    (id, type, title, description, placeholder, required, default, validation, help, error, options, conditional),
+    `formulas jsonb default '[]'` — ordered variable list (id, label, expression AST or step list, format),
+    `result_config jsonb default '{}'` — headline, score, benchmark, summary, recommendations, CTAs, sections,
+    `lead_fields jsonb default '{}'` — toggles + consent copy,
+    `ai_recommendations jsonb default '[]'` — static rules (condition → recommendation, priority),
+    `created_at`, `updated_at` (trigger `tg_set_updated_at`).
+- `assessment_templates` — reusable presets (`name`, `industry`, `questions`, `formulas`, `result_config`, `ai_recommendations`). Seed rows via migration for the 8 example templates.
+- `assessment_submissions` — one row per completed submission
+  - `assessment_id fk`, `lead_id fk null`, `answers jsonb`, `computed jsonb`
+    (formula outputs), `score numeric null`, `recommendations jsonb`,
+    `utm jsonb`, `landing_page`, `referrer`, `country`, `device`, `browser`,
+    `ip_address`, `user_agent`, `duration_seconds`, `completed boolean`,
+    `created_at`.
+- `assessment_events` — lightweight funnel tracker
+  - `assessment_id`, `type` (view/start/step/complete/drop), `step_index null`,
+    `session_id`, `created_at`.
 
-Read
-- `list_resources` — filter by status/category, includes drafts (admin scope).
-- `get_resource` — by id or slug, full record incl. `file_path`/`external_url`.
-- `list_leads` — filter by resource_id, date range, platform; paginated.
-- `dashboard_stats` — totals + today's leads.
-- `list_categories` — distinct categories.
+### Grants & RLS
 
-Write
-- `create_resource` — mirrors `upsertResource` (insert path).
-- `update_resource` — mirrors `upsertResource` (update path); supports publish/unpublish via `status`.
-- `delete_resource` — mirrors `deleteResource` (removes storage file).
-- `create_signed_url` — generate a signed URL for a resource's file for preview.
+- `assessments`: admins full CRUD; `anon`+`authenticated` SELECT `WHERE status = 'published'` (needed for public page).
+- `assessment_templates`: admins full CRUD; authenticated SELECT for the builder.
+- `assessment_submissions`: admins SELECT/DELETE. INSERT allowed to `anon`+`authenticated` (public submits); no UPDATE.
+- `assessment_events`: same as submissions — anon INSERT, admin SELECT.
 
-Not exposed (out of scope for MVP)
-- File uploads to storage (MCP tool timeout risk; keep in admin UI).
-- Lead capture (already public via the site; not useful to Claude).
+Extend `leads` linkage by adding a `submission_id` to the submission row and reusing the existing `leads` table (insert a lead as part of the server function that finalizes a submission).
 
-Each tool handler:
-1. Uses `ctx.getToken()` + `ctx.getUserId()` from `@lovable.dev/mcp-js`.
-2. Builds a per-request Supabase client with `Authorization: Bearer <token>` so RLS runs as the OAuth user.
-3. Verifies `has_role(userId, 'admin')` before any read/write. Non-admins get a permission error.
+## Server functions
 
-## Implementation steps
+`src/lib/assessments.functions.ts`:
+- `listAssessments`, `getAssessment(id)`, `getAssessmentBySlug(slug)` (public, published-only), `upsertAssessment`, `duplicateAssessment`, `archiveAssessment`, `deleteAssessment` — admin-gated via `requireSupabaseAuth` + `has_role`.
+- `listTemplates`, `applyTemplate(assessmentId, templateId)`.
+- `submitAssessment({ slug, answers, leadFields, utm, meta })` — public, no auth. Loads assessment, evaluates formulas server-side (safe evaluator, no `eval`), applies AI recommendation rules, inserts a `leads` row + `assessment_submissions` row atomically, returns the computed result payload for the results screen.
+- `trackAssessmentEvent({ slug, type, stepIndex, sessionId })` — public, best-effort insert.
+- `assessmentAnalytics(id)` — admin — aggregates from `assessment_events`/`assessment_submissions`.
 
-1. **Add dependencies** — `bun add @lovable.dev/mcp-js zod`; whitelist `@lovable.dev/mcp-js` in `bunfig.toml` `minimumReleaseAgeExcludes`.
-2. **Vite plugin** — add `mcpPlugin()` from `@lovable.dev/mcp-js/stacks/tanstack/vite` to `vite.config.ts`. This auto-generates `/mcp`, companion routes, and `/.well-known/oauth-protected-resource`.
-3. **Activate Supabase OAuth 2.1** — call `supabase--configure_oauth_server` (enables DCR so Claude self-registers).
-4. **Ensure asymmetric signing keys** — call `supabase--migrate_signing_keys` (required for OAuth ID tokens).
-5. **Consent route** — `src/routes/[.]lovable.oauth.consent.tsx` (ssr:false) using `supabase.auth.oauth.getAuthorizationDetails / approve / deny`. Redirects unauth users to `/auth` preserving the consent URL through password/OAuth sign-in.
-6. **Update `/auth`** — consume `next` search param after email login, Google `redirect_uri`, and signup `emailRedirectTo` to return to consent URL.
-7. **MCP entry** — `src/lib/mcp/index.ts` with `defineMcp({ name, title, version, instructions, auth: auth.oauth.issuer({ issuer: https://${VITE_SUPABASE_PROJECT_ID}.supabase.co/auth/v1, acceptedAudiences: 'authenticated' }), tools: [...] })`.
-8. **Tool files** — one per tool under `src/lib/mcp/tools/`, each Zod-validated, admin-gated, RLS-scoped.
-9. **Manifest** — run `app_mcp_server--extract_mcp_manifest` after tools are saved.
-10. **Favicon** — add a simple Dock favicon if missing so the connector card looks correct.
+Formula evaluator: interpret the stored `formulas` array as ordered steps `{ id, label, op: add|sub|mul|div|pct|round|min|max|avg|const|var, args: [ref] }`. No string eval — deterministic and safe.
+
+## Admin routes (Owner Console)
+
+New leaf routes under `src/routes/_authenticated/`:
+- `admin.assessments.tsx` (layout with `<Outlet />`) — optional; use flat dot-routes:
+- `admin.assessments.index.tsx` — All Assessments table (search, sort, filters, bulk archive/delete, row actions: Edit, Duplicate, Analytics, Copy Link, Archive, Delete).
+- `admin.assessments.new.tsx` — starts a blank or template-seeded draft, redirects to editor.
+- `admin.assessments.$id.tsx` — Builder with tabs:
+  1. General (name, slug, industry, headline, CTAs, SEO, images, status)
+  2. Questions (drag-reorder list; per-question inspector; supports all 18 types; conditional logic = simple `{ ifQuestionId, op, value }`)
+  3. Formulas (visual step list, references question ids or prior variables, live preview)
+  4. Result (editable headline, dynamic tokens like `{{monthlyLoss}}`, sections, CTAs)
+  5. AI Recommendations (rule list: `when <var> <op> <value>` → recommendation, priority, CTA)
+  6. Lead Capture (toggle fields, consent copy)
+  7. Share (public URL, copy, preview, QR — QR via `qrcode` lib)
+- `admin.assessments.templates.tsx` — grid of templates, "Use template" creates a new draft from it.
+- `admin.assessments.analytics.tsx` — pick an assessment → per-assessment analytics view.
+
+Sidebar update in `src/components/admin/owner-console.tsx`: insert new group "Assessment Engine" with children All Assessments / New Assessment / Templates / Analytics. Icon: `ClipboardList` (or similar). No other sidebar changes.
+
+## Public experience
+
+`src/routes/assessment.$slug.tsx` — SSR-safe route.
+- Loader calls `getAssessmentBySlug` (public, published-only). 404 via `notFound()` otherwise.
+- Head: uses assessment `seo_title` / `seo_description` / `og_image_url`.
+- Component: Dock typography, serif hero, multi-step wizard (one question per step or grouped), progress bar, Previous/Next, auto-save to `sessionStorage` per slug, `trackAssessmentEvent` on view/start/step/complete.
+- Final step: lead capture form (only enabled fields). On submit: `submitAssessment` → results screen showing dynamic result config + AI recommendations + CTAs.
+- Fully responsive; no admin chrome; not linked from nav, home, sitemap, or resources.
+
+`robots.txt` / sitemap: do not include `/assessment/*`.
+
+## Reusable engine internals
+
+`src/lib/assessment-engine/`:
+- `types.ts` — Assessment, Question, Formula, ResultConfig, Recommendation.
+- `evaluator.ts` — pure formula evaluation from answers → computed vars.
+- `recommendations.ts` — rule evaluation → ranked recommendations.
+- `render-tokens.ts` — `{{var}}` interpolation with formatters (currency/percent/number).
+- `wizard/` — public components (Step, ProgressBar, QuestionRenderer for all 18 types).
+- `builder/` — admin components (QuestionList, QuestionInspector, FormulaBuilder, ResultBuilder, RecommendationBuilder, LeadFieldsBuilder, SharePanel).
+
+The 18 question types are all rendered through one `QuestionRenderer` switching on `type`.
+
+## Design
+
+- Reuse existing tokens (`bg-canvas`, `text-ink`, `border-border`, serif headings, `eyebrow`).
+- No new colors, no gradients. Tables/cards match existing admin patterns.
+- Public wizard mirrors `/resources` / `/about` typography.
+
+## Non-goals (explicit)
+
+- No changes to home, nav, footer, resources, leads, CRM, pipeline, email, analytics, settings, or the existing dashboard.
+- No AI provider wiring yet — AI Recommendations run from configured rules (deterministic). Hooking a live model is a later step.
+- No file-upload storage buckets for question uploads yet — the "File Upload" question type is accepted in the builder but marked "Coming soon" at runtime to avoid new bucket + RLS work in this PR.
+- Booked-call metric shows `—` until a booking source exists (per your no-fake-data rule).
 
 ## Technical notes
 
-- OAuth issuer must be the direct `supabase.co` host, built from `import.meta.env.VITE_SUPABASE_PROJECT_ID` (not `SUPABASE_URL`, which becomes the `.lovable.cloud` proxy on publish and fails RFC 8414 issuer match).
-- All admin checks stay in tool handlers, not the audience claim (Supabase tokens all carry `aud: authenticated`).
-- Never expose the raw `file_path`/`external_url` in unauthenticated contexts — MCP is admin-only so it's fine here, but signed URLs are still preferred for file access.
-- Do NOT hand-write `src/routes/mcp.ts` or the well-known route — the Vite plugin owns them.
-- Reuse existing `assertAdmin` pattern from `resources.functions.ts`.
-
-## Out of scope
-
-- Public/no-auth MCP variant.
-- File upload tool.
-- Publishing existing server fns (`upsertResource`, `deleteResource`) via REST — MCP calls Supabase directly with the OAuth user's token.
-- Any changes to landing page, resource card, or lead capture UI.
-
-## After implementation
-
-Test flow: in Claude Desktop, add MCP server → `https://dock4free.lovable.app/mcp` → complete OAuth as admin user → verify tools appear and `list_resources` returns drafts.
+- Migration is one file: enum + 4 tables + GRANTs + RLS + policies + updated_at triggers + template seed inserts.
+- `qrcode` added via `bun add qrcode` for the Share panel; `@dnd-kit/core` + `@dnd-kit/sortable` for drag reorder (already common; will add if absent).
+- Public submit path uses the server publishable client pattern for reads + `supabaseAdmin` (loaded inside handler) only for the atomic insert, after basic zod validation and per-IP rate check.
+- All admin server fns use `requireSupabaseAuth` + `has_role('admin')`.

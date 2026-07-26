@@ -18,6 +18,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResourceSlugRouteImport } from './routes/resource.$slug'
+import { Route as AssessmentSlugRouteImport } from './routes/assessment.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -31,6 +32,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminEmailIndexRouteImport } from './routes/_authenticated/admin.email.index'
 import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
+import { Route as AuthenticatedAdminAssessmentsIndexRouteImport } from './routes/_authenticated/admin.assessments.index'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
 import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
 import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
@@ -47,6 +49,10 @@ import { Route as AuthenticatedAdminEmailAiWriterRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminCrmContactsRouteImport } from './routes/_authenticated/admin.crm.contacts'
 import { Route as AuthenticatedAdminCrmCompaniesRouteImport } from './routes/_authenticated/admin.crm.companies'
 import { Route as AuthenticatedAdminCrmActivityRouteImport } from './routes/_authenticated/admin.crm.activity'
+import { Route as AuthenticatedAdminAssessmentsTemplatesRouteImport } from './routes/_authenticated/admin.assessments.templates'
+import { Route as AuthenticatedAdminAssessmentsNewRouteImport } from './routes/_authenticated/admin.assessments.new'
+import { Route as AuthenticatedAdminAssessmentsAnalyticsRouteImport } from './routes/_authenticated/admin.assessments.analytics'
+import { Route as AuthenticatedAdminAssessmentsIdRouteImport } from './routes/_authenticated/admin.assessments.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -90,6 +96,11 @@ const IndexRoute = IndexRouteImport.update({
 const ResourceSlugRoute = ResourceSlugRouteImport.update({
   id: '/resource/$slug',
   path: '/resource/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssessmentSlugRoute = AssessmentSlugRouteImport.update({
+  id: '/assessment/$slug',
+  path: '/assessment/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -164,6 +175,12 @@ const AuthenticatedAdminCrmIndexRoute =
   AuthenticatedAdminCrmIndexRouteImport.update({
     id: '/crm/',
     path: '/crm/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssessmentsIndexRoute =
+  AuthenticatedAdminAssessmentsIndexRouteImport.update({
+    id: '/assessments/',
+    path: '/assessments/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminResourcesNewRoute =
@@ -262,6 +279,30 @@ const AuthenticatedAdminCrmActivityRoute =
     path: '/crm/activity',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAssessmentsTemplatesRoute =
+  AuthenticatedAdminAssessmentsTemplatesRouteImport.update({
+    id: '/assessments/templates',
+    path: '/assessments/templates',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssessmentsNewRoute =
+  AuthenticatedAdminAssessmentsNewRouteImport.update({
+    id: '/assessments/new',
+    path: '/assessments/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssessmentsAnalyticsRoute =
+  AuthenticatedAdminAssessmentsAnalyticsRouteImport.update({
+    id: '/assessments/analytics',
+    path: '/assessments/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssessmentsIdRoute =
+  AuthenticatedAdminAssessmentsIdRouteImport.update({
+    id: '/assessments/$id',
+    path: '/assessments/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -274,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/assessment/$slug': typeof AssessmentSlugRoute
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -282,6 +324,10 @@ export interface FileRoutesByFullPath {
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
+  '/admin/assessments/analytics': typeof AuthenticatedAdminAssessmentsAnalyticsRoute
+  '/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
+  '/admin/assessments/templates': typeof AuthenticatedAdminAssessmentsTemplatesRoute
   '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
   '/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
@@ -298,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/assessments/': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -312,6 +359,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/assessment/$slug': typeof AssessmentSlugRoute
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -320,6 +368,10 @@ export interface FileRoutesByTo {
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
+  '/admin/assessments/analytics': typeof AuthenticatedAdminAssessmentsAnalyticsRoute
+  '/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
+  '/admin/assessments/templates': typeof AuthenticatedAdminAssessmentsTemplatesRoute
   '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
   '/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
@@ -336,6 +388,7 @@ export interface FileRoutesByTo {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/assessments': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
@@ -353,6 +406,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/assessment/$slug': typeof AssessmentSlugRoute
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -361,6 +415,10 @@ export interface FileRoutesById {
   '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
+  '/_authenticated/admin/assessments/analytics': typeof AuthenticatedAdminAssessmentsAnalyticsRoute
+  '/_authenticated/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
+  '/_authenticated/admin/assessments/templates': typeof AuthenticatedAdminAssessmentsTemplatesRoute
   '/_authenticated/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/_authenticated/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
   '/_authenticated/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
@@ -377,6 +435,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/_authenticated/admin/assessments/': typeof AuthenticatedAdminAssessmentsIndexRoute
   '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/_authenticated/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -394,6 +453,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/assessment/$slug'
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -402,6 +462,10 @@ export interface FileRouteTypes {
     | '/admin/pipeline'
     | '/admin/settings'
     | '/admin/'
+    | '/admin/assessments/$id'
+    | '/admin/assessments/analytics'
+    | '/admin/assessments/new'
+    | '/admin/assessments/templates'
     | '/admin/crm/activity'
     | '/admin/crm/companies'
     | '/admin/crm/contacts'
@@ -418,6 +482,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/assessments/'
     | '/admin/crm/'
     | '/admin/email/'
     | '/admin/resources/'
@@ -432,6 +497,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/assessment/$slug'
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -440,6 +506,10 @@ export interface FileRouteTypes {
     | '/admin/pipeline'
     | '/admin/settings'
     | '/admin'
+    | '/admin/assessments/$id'
+    | '/admin/assessments/analytics'
+    | '/admin/assessments/new'
+    | '/admin/assessments/templates'
     | '/admin/crm/activity'
     | '/admin/crm/companies'
     | '/admin/crm/contacts'
@@ -456,6 +526,7 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/assessments'
     | '/admin/crm'
     | '/admin/email'
     | '/admin/resources'
@@ -472,6 +543,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
+    | '/assessment/$slug'
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -480,6 +552,10 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/pipeline'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/assessments/$id'
+    | '/_authenticated/admin/assessments/analytics'
+    | '/_authenticated/admin/assessments/new'
+    | '/_authenticated/admin/assessments/templates'
     | '/_authenticated/admin/crm/activity'
     | '/_authenticated/admin/crm/companies'
     | '/_authenticated/admin/crm/contacts'
@@ -496,6 +572,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/resources/categories'
     | '/_authenticated/admin/resources/drafts'
     | '/_authenticated/admin/resources/new'
+    | '/_authenticated/admin/assessments/'
     | '/_authenticated/admin/crm/'
     | '/_authenticated/admin/email/'
     | '/_authenticated/admin/resources/'
@@ -512,6 +589,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AssessmentSlugRoute: typeof AssessmentSlugRoute
   ResourceSlugRoute: typeof ResourceSlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -580,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/resource/$slug'
       fullPath: '/resource/$slug'
       preLoaderRoute: typeof ResourceSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assessment/$slug': {
+      id: '/assessment/$slug'
+      path: '/assessment/$slug'
+      fullPath: '/assessment/$slug'
+      preLoaderRoute: typeof AssessmentSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -671,6 +756,13 @@ declare module '@tanstack/react-router' {
       path: '/crm'
       fullPath: '/admin/crm/'
       preLoaderRoute: typeof AuthenticatedAdminCrmIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/assessments/': {
+      id: '/_authenticated/admin/assessments/'
+      path: '/assessments'
+      fullPath: '/admin/assessments/'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/resources/new': {
@@ -785,6 +877,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCrmActivityRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/assessments/templates': {
+      id: '/_authenticated/admin/assessments/templates'
+      path: '/assessments/templates'
+      fullPath: '/admin/assessments/templates'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsTemplatesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/assessments/new': {
+      id: '/_authenticated/admin/assessments/new'
+      path: '/assessments/new'
+      fullPath: '/admin/assessments/new'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/assessments/analytics': {
+      id: '/_authenticated/admin/assessments/analytics'
+      path: '/assessments/analytics'
+      fullPath: '/admin/assessments/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/assessments/$id': {
+      id: '/_authenticated/admin/assessments/$id'
+      path: '/assessments/$id'
+      fullPath: '/admin/assessments/$id'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -812,6 +932,10 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminAssessmentsIdRoute: typeof AuthenticatedAdminAssessmentsIdRoute
+  AuthenticatedAdminAssessmentsAnalyticsRoute: typeof AuthenticatedAdminAssessmentsAnalyticsRoute
+  AuthenticatedAdminAssessmentsNewRoute: typeof AuthenticatedAdminAssessmentsNewRoute
+  AuthenticatedAdminAssessmentsTemplatesRoute: typeof AuthenticatedAdminAssessmentsTemplatesRoute
   AuthenticatedAdminCrmActivityRoute: typeof AuthenticatedAdminCrmActivityRoute
   AuthenticatedAdminCrmCompaniesRoute: typeof AuthenticatedAdminCrmCompaniesRoute
   AuthenticatedAdminCrmContactsRoute: typeof AuthenticatedAdminCrmContactsRoute
@@ -825,6 +949,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
   AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
+  AuthenticatedAdminAssessmentsIndexRoute: typeof AuthenticatedAdminAssessmentsIndexRoute
   AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
   AuthenticatedAdminEmailIndexRoute: typeof AuthenticatedAdminEmailIndexRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
@@ -836,6 +961,12 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminAssessmentsIdRoute: AuthenticatedAdminAssessmentsIdRoute,
+  AuthenticatedAdminAssessmentsAnalyticsRoute:
+    AuthenticatedAdminAssessmentsAnalyticsRoute,
+  AuthenticatedAdminAssessmentsNewRoute: AuthenticatedAdminAssessmentsNewRoute,
+  AuthenticatedAdminAssessmentsTemplatesRoute:
+    AuthenticatedAdminAssessmentsTemplatesRoute,
   AuthenticatedAdminCrmActivityRoute: AuthenticatedAdminCrmActivityRoute,
   AuthenticatedAdminCrmCompaniesRoute: AuthenticatedAdminCrmCompaniesRoute,
   AuthenticatedAdminCrmContactsRoute: AuthenticatedAdminCrmContactsRoute,
@@ -851,6 +982,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourcesDraftsRoute:
     AuthenticatedAdminResourcesDraftsRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
+  AuthenticatedAdminAssessmentsIndexRoute:
+    AuthenticatedAdminAssessmentsIndexRoute,
   AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
   AuthenticatedAdminEmailIndexRoute: AuthenticatedAdminEmailIndexRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
@@ -882,6 +1015,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AssessmentSlugRoute: AssessmentSlugRoute,
   ResourceSlugRoute: ResourceSlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
