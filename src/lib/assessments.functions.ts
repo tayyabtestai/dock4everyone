@@ -177,7 +177,7 @@ const SubmitInput = z.object({
     team_size: z.string().trim().max(60).optional().default(""),
     country: z.string().trim().max(80).optional().default(""),
     consent: z.boolean().optional().default(false),
-  }).default({}),
+  }).partial().default(() => ({} as any)),
   utm: z.record(z.string(), z.string()).default({}),
   landing_page: z.string().max(1000).optional().default(""),
   duration_seconds: z.number().int().min(0).max(60 * 60 * 4).optional().default(0),
@@ -204,8 +204,8 @@ export const submitAssessment = createServerFn({ method: "POST" })
       .from("assessments").select("*").eq("slug", data.slug).eq("status", "published").maybeSingle();
     if (error || !a) throw new Error("Assessment not available");
 
-    const computed = evaluateFormulas(a.formulas as Formula[], data.answers);
-    const recs = applyRecommendations(a.ai_recommendations as RecommendationRule[], computed);
+    const computed = evaluateFormulas((a.formulas as unknown) as Formula[], data.answers);
+    const recs = applyRecommendations((a.ai_recommendations as unknown) as RecommendationRule[], computed);
 
     let ip: string | null = null; let ua = "";
     try {
@@ -238,8 +238,8 @@ export const submitAssessment = createServerFn({ method: "POST" })
       lead_id,
       answers: data.answers,
       computed,
-      score: (computed as any)[(a.result_config as ResultConfig)?.valueVar ?? ""] ?? null,
-      recommendations: recs,
+      score: (computed as any)[((a.result_config as unknown) as ResultConfig)?.valueVar ?? ""] ?? null,
+      recommendations: recs as unknown as any,
       utm: data.utm,
       landing_page: data.landing_page || null,
       referrer: null,
@@ -255,8 +255,8 @@ export const submitAssessment = createServerFn({ method: "POST" })
       submission_id: sub.id,
       computed,
       recommendations: recs,
-      result_config: a.result_config as ResultConfig,
-      formulas: a.formulas as Formula[],
+      result_config: (a.result_config as unknown) as ResultConfig,
+      formulas: (a.formulas as unknown) as Formula[],
     };
   });
 
