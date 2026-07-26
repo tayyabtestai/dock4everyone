@@ -49,6 +49,7 @@ import { Route as AuthenticatedAdminCrmContactsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminCrmCompaniesRouteImport } from './routes/_authenticated/admin.crm.companies'
 import { Route as AuthenticatedAdminCrmActivityRouteImport } from './routes/_authenticated/admin.crm.activity'
 import { Route as AuthenticatedAdminAssessmentsNewRouteImport } from './routes/_authenticated/admin.assessments.new'
+import { Route as AuthenticatedAdminAssessmentsIdRouteImport } from './routes/_authenticated/admin.assessments.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -276,6 +277,12 @@ const AuthenticatedAdminAssessmentsNewRoute =
     path: '/assessments/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAssessmentsIdRoute =
+  AuthenticatedAdminAssessmentsIdRouteImport.update({
+    id: '/assessments/$id',
+    path: '/assessments/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
   '/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
   '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
@@ -336,6 +344,7 @@ export interface FileRoutesByTo {
   '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
   '/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
   '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
@@ -379,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/assessments/$id': typeof AuthenticatedAdminAssessmentsIdRoute
   '/_authenticated/admin/assessments/new': typeof AuthenticatedAdminAssessmentsNewRoute
   '/_authenticated/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
   '/_authenticated/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
@@ -422,6 +432,7 @@ export interface FileRouteTypes {
     | '/admin/pipeline'
     | '/admin/settings'
     | '/admin/'
+    | '/admin/assessments/$id'
     | '/admin/assessments/new'
     | '/admin/crm/activity'
     | '/admin/crm/companies'
@@ -462,6 +473,7 @@ export interface FileRouteTypes {
     | '/admin/pipeline'
     | '/admin/settings'
     | '/admin'
+    | '/admin/assessments/$id'
     | '/admin/assessments/new'
     | '/admin/crm/activity'
     | '/admin/crm/companies'
@@ -504,6 +516,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/pipeline'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/assessments/$id'
     | '/_authenticated/admin/assessments/new'
     | '/_authenticated/admin/crm/activity'
     | '/_authenticated/admin/crm/companies'
@@ -825,6 +838,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAssessmentsNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/assessments/$id': {
+      id: '/_authenticated/admin/assessments/$id'
+      path: '/assessments/$id'
+      fullPath: '/admin/assessments/$id'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -852,6 +872,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminAssessmentsIdRoute: typeof AuthenticatedAdminAssessmentsIdRoute
   AuthenticatedAdminAssessmentsNewRoute: typeof AuthenticatedAdminAssessmentsNewRoute
   AuthenticatedAdminCrmActivityRoute: typeof AuthenticatedAdminCrmActivityRoute
   AuthenticatedAdminCrmCompaniesRoute: typeof AuthenticatedAdminCrmCompaniesRoute
@@ -878,6 +899,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminAssessmentsIdRoute: AuthenticatedAdminAssessmentsIdRoute,
   AuthenticatedAdminAssessmentsNewRoute: AuthenticatedAdminAssessmentsNewRoute,
   AuthenticatedAdminCrmActivityRoute: AuthenticatedAdminCrmActivityRoute,
   AuthenticatedAdminCrmCompaniesRoute: AuthenticatedAdminCrmCompaniesRoute,
