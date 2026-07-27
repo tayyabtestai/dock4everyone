@@ -22,7 +22,6 @@ import { Route as AssessmentSlugRouteImport } from './routes/assessment.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as AssessmentRouteImport } from './routes/assessment.'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
@@ -121,11 +120,6 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AssessmentRoute = AssessmentRouteImport.update({
-  id: '/assessment/',
-  path: '/assessment/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -318,7 +312,6 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/assessment/': typeof AssessmentRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -364,7 +357,6 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/assessment': typeof AssessmentRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/assessment/$slug': typeof AssessmentSlugRoute
@@ -411,7 +403,6 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/assessment/': typeof AssessmentRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -459,7 +450,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/resources'
     | '/sitemap.xml'
-    | '/assessment/'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -505,7 +495,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/resources'
     | '/sitemap.xml'
-    | '/assessment'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/assessment/$slug'
@@ -551,7 +540,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/resources'
     | '/sitemap.xml'
-    | '/assessment/'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
@@ -599,7 +587,6 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   ResourcesRoute: typeof ResourcesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  AssessmentRoute: typeof AssessmentRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AssessmentSlugRoute: typeof AssessmentSlugRoute
@@ -699,13 +686,6 @@ declare module '@tanstack/react-router' {
       path: '/.mcp/list-tools'
       fullPath: '/.mcp/list-tools'
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assessment/': {
-      id: '/assessment/'
-      path: '/assessment'
-      fullPath: '/assessment/'
-      preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -1032,7 +1012,6 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   ResourcesRoute: ResourcesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  AssessmentRoute: AssessmentRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
