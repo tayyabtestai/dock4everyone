@@ -27,6 +27,7 @@ export interface Question {
   max?: number;
   step?: number;
   conditional?: QuestionCondition;
+  section?: string;
 }
 
 export type FormulaOp =

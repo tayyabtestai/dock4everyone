@@ -208,6 +208,7 @@ function QuestionsTab({ row, update }: any) {
                 </select>
               </Field>
               <Field label="Title"><input className={inputCls} value={q.title} onChange={(e) => patch(i, { title: e.target.value })} /></Field>
+              <Field label="Section" hint="Groups questions into a milestone (e.g. Business Snapshot, Customers, Operations, Growth). Consecutive questions with the same section share a milestone."><input className={inputCls} value={q.section ?? ""} placeholder="Business Snapshot" onChange={(e) => patch(i, { section: e.target.value })} /></Field>
               <Field label="Description"><input className={inputCls} value={q.description ?? ""} onChange={(e) => patch(i, { description: e.target.value })} /></Field>
               <Field label="Placeholder"><input className={inputCls} value={q.placeholder ?? ""} onChange={(e) => patch(i, { placeholder: e.target.value })} /></Field>
               <Field label="Help text"><input className={inputCls} value={q.helpText ?? ""} onChange={(e) => patch(i, { helpText: e.target.value })} /></Field>
