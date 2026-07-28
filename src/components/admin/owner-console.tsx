@@ -15,7 +15,7 @@ import {
   PanelLeftOpen,
   Menu,
   X,
-  ClipboardList,
+  TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -55,12 +55,19 @@ const NAV: Item[] = [
   },
   { kind: "leaf", to: "/admin/pipeline", label: "Pipeline", icon: GitBranch },
   {
-    kind: "group", key: "assessments", label: "Assessment Engine", icon: ClipboardList, to: "/admin/assessments",
+    kind: "group", key: "revenue-recovery", label: "Revenue Recovery Platform", icon: TrendingUp, to: "/admin/revenue-recovery",
     children: [
-      { to: "/admin/assessments", label: "All Assessments" },
-      { to: "/admin/assessments/new", label: "New Assessment" },
-      { to: "/admin/assessments/templates", label: "Templates" },
-      { to: "/admin/assessments/analytics", label: "Analytics" },
+      { to: "/admin/revenue-recovery", label: "Overview" },
+      { to: "/admin/revenue-recovery/engine", label: "Revenue Recovery Engine" },
+      { to: "/admin/revenue-recovery/leakage", label: "Revenue Leakage Calculator" },
+      { to: "/admin/revenue-recovery/ai-opportunity", label: "AI Opportunity Scanner" },
+      { to: "/admin/revenue-recovery/time-waste", label: "Time Waste Calculator" },
+      { to: "/admin/revenue-recovery/lead-conversion", label: "Lead Conversion Audit" },
+      { to: "/admin/revenue-recovery/missed-calls", label: "Missed Calls Calculator" },
+      { to: "/admin/revenue-recovery/appointment-recovery", label: "Appointment Recovery Calculator" },
+      { to: "/admin/revenue-recovery/efficiency-score", label: "Business Efficiency Score" },
+      { to: "/admin/revenue-recovery/automation-report", label: "Automation Opportunity Report" },
+      { to: "/admin/revenue-recovery/roi", label: "AI ROI Calculator" },
     ],
   },
   {
