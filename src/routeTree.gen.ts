@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as AuthenticatedAdminRevenueRecoveryIndexRouteImport } from './routes/_authenticated/admin.revenue-recovery.index'
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminEmailIndexRouteImport } from './routes/_authenticated/admin.email.index'
 import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
@@ -148,6 +149,12 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRevenueRecoveryIndexRoute =
+  AuthenticatedAdminRevenueRecoveryIndexRouteImport.update({
+    id: '/revenue-recovery/',
+    path: '/revenue-recovery/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesIndexRoute =
   AuthenticatedAdminResourcesIndexRouteImport.update({
     id: '/resources/',
@@ -301,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
+  '/admin/revenue-recovery/': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -339,6 +347,7 @@ export interface FileRoutesByTo {
   '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
+  '/admin/revenue-recovery': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -380,6 +389,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/_authenticated/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
+  '/_authenticated/admin/revenue-recovery/': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/admin/crm/'
     | '/admin/email/'
     | '/admin/resources/'
+    | '/admin/revenue-recovery/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/email'
     | '/admin/resources'
+    | '/admin/revenue-recovery'
   id:
     | '__root__'
     | '/'
@@ -499,6 +511,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/crm/'
     | '/_authenticated/admin/email/'
     | '/_authenticated/admin/resources/'
+    | '/_authenticated/admin/revenue-recovery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -651,6 +664,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/.lovable/oauth/consent'
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/revenue-recovery/': {
+      id: '/_authenticated/admin/revenue-recovery/'
+      path: '/revenue-recovery'
+      fullPath: '/admin/revenue-recovery/'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/resources/': {
       id: '/_authenticated/admin/resources/'
@@ -828,6 +848,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
   AuthenticatedAdminEmailIndexRoute: typeof AuthenticatedAdminEmailIndexRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
+  AuthenticatedAdminRevenueRecoveryIndexRoute: typeof AuthenticatedAdminRevenueRecoveryIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -854,6 +875,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
   AuthenticatedAdminEmailIndexRoute: AuthenticatedAdminEmailIndexRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
+  AuthenticatedAdminRevenueRecoveryIndexRoute:
+    AuthenticatedAdminRevenueRecoveryIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
