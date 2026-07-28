@@ -32,6 +32,16 @@ import { Route as AuthenticatedAdminRevenueRecoveryIndexRouteImport } from './ro
 import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
 import { Route as AuthenticatedAdminEmailIndexRouteImport } from './routes/_authenticated/admin.email.index'
 import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
+import { Route as AuthenticatedAdminRevenueRecoveryTimeWasteRouteImport } from './routes/_authenticated/admin.revenue-recovery.time-waste'
+import { Route as AuthenticatedAdminRevenueRecoveryRoiRouteImport } from './routes/_authenticated/admin.revenue-recovery.roi'
+import { Route as AuthenticatedAdminRevenueRecoveryMissedCallsRouteImport } from './routes/_authenticated/admin.revenue-recovery.missed-calls'
+import { Route as AuthenticatedAdminRevenueRecoveryLeakageRouteImport } from './routes/_authenticated/admin.revenue-recovery.leakage'
+import { Route as AuthenticatedAdminRevenueRecoveryLeadConversionRouteImport } from './routes/_authenticated/admin.revenue-recovery.lead-conversion'
+import { Route as AuthenticatedAdminRevenueRecoveryEngineRouteImport } from './routes/_authenticated/admin.revenue-recovery.engine'
+import { Route as AuthenticatedAdminRevenueRecoveryEfficiencyScoreRouteImport } from './routes/_authenticated/admin.revenue-recovery.efficiency-score'
+import { Route as AuthenticatedAdminRevenueRecoveryAutomationReportRouteImport } from './routes/_authenticated/admin.revenue-recovery.automation-report'
+import { Route as AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRouteImport } from './routes/_authenticated/admin.revenue-recovery.appointment-recovery'
+import { Route as AuthenticatedAdminRevenueRecoveryAiOpportunityRouteImport } from './routes/_authenticated/admin.revenue-recovery.ai-opportunity'
 import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
 import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
 import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
@@ -173,6 +183,66 @@ const AuthenticatedAdminCrmIndexRoute =
     path: '/crm/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminRevenueRecoveryTimeWasteRoute =
+  AuthenticatedAdminRevenueRecoveryTimeWasteRouteImport.update({
+    id: '/revenue-recovery/time-waste',
+    path: '/revenue-recovery/time-waste',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryRoiRoute =
+  AuthenticatedAdminRevenueRecoveryRoiRouteImport.update({
+    id: '/revenue-recovery/roi',
+    path: '/revenue-recovery/roi',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryMissedCallsRoute =
+  AuthenticatedAdminRevenueRecoveryMissedCallsRouteImport.update({
+    id: '/revenue-recovery/missed-calls',
+    path: '/revenue-recovery/missed-calls',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryLeakageRoute =
+  AuthenticatedAdminRevenueRecoveryLeakageRouteImport.update({
+    id: '/revenue-recovery/leakage',
+    path: '/revenue-recovery/leakage',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryLeadConversionRoute =
+  AuthenticatedAdminRevenueRecoveryLeadConversionRouteImport.update({
+    id: '/revenue-recovery/lead-conversion',
+    path: '/revenue-recovery/lead-conversion',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryEngineRoute =
+  AuthenticatedAdminRevenueRecoveryEngineRouteImport.update({
+    id: '/revenue-recovery/engine',
+    path: '/revenue-recovery/engine',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute =
+  AuthenticatedAdminRevenueRecoveryEfficiencyScoreRouteImport.update({
+    id: '/revenue-recovery/efficiency-score',
+    path: '/revenue-recovery/efficiency-score',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryAutomationReportRoute =
+  AuthenticatedAdminRevenueRecoveryAutomationReportRouteImport.update({
+    id: '/revenue-recovery/automation-report',
+    path: '/revenue-recovery/automation-report',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute =
+  AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRouteImport.update({
+    id: '/revenue-recovery/appointment-recovery',
+    path: '/revenue-recovery/appointment-recovery',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRevenueRecoveryAiOpportunityRoute =
+  AuthenticatedAdminRevenueRecoveryAiOpportunityRouteImport.update({
+    id: '/revenue-recovery/ai-opportunity',
+    path: '/revenue-recovery/ai-opportunity',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourcesNewRoute =
   AuthenticatedAdminResourcesNewRouteImport.update({
     id: '/resources/new',
@@ -305,6 +375,16 @@ export interface FileRoutesByFullPath {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/revenue-recovery/ai-opportunity': typeof AuthenticatedAdminRevenueRecoveryAiOpportunityRoute
+  '/admin/revenue-recovery/appointment-recovery': typeof AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute
+  '/admin/revenue-recovery/automation-report': typeof AuthenticatedAdminRevenueRecoveryAutomationReportRoute
+  '/admin/revenue-recovery/efficiency-score': typeof AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute
+  '/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
+  '/admin/revenue-recovery/lead-conversion': typeof AuthenticatedAdminRevenueRecoveryLeadConversionRoute
+  '/admin/revenue-recovery/leakage': typeof AuthenticatedAdminRevenueRecoveryLeakageRoute
+  '/admin/revenue-recovery/missed-calls': typeof AuthenticatedAdminRevenueRecoveryMissedCallsRoute
+  '/admin/revenue-recovery/roi': typeof AuthenticatedAdminRevenueRecoveryRoiRoute
+  '/admin/revenue-recovery/time-waste': typeof AuthenticatedAdminRevenueRecoveryTimeWasteRoute
   '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -344,6 +424,16 @@ export interface FileRoutesByTo {
   '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/admin/revenue-recovery/ai-opportunity': typeof AuthenticatedAdminRevenueRecoveryAiOpportunityRoute
+  '/admin/revenue-recovery/appointment-recovery': typeof AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute
+  '/admin/revenue-recovery/automation-report': typeof AuthenticatedAdminRevenueRecoveryAutomationReportRoute
+  '/admin/revenue-recovery/efficiency-score': typeof AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute
+  '/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
+  '/admin/revenue-recovery/lead-conversion': typeof AuthenticatedAdminRevenueRecoveryLeadConversionRoute
+  '/admin/revenue-recovery/leakage': typeof AuthenticatedAdminRevenueRecoveryLeakageRoute
+  '/admin/revenue-recovery/missed-calls': typeof AuthenticatedAdminRevenueRecoveryMissedCallsRoute
+  '/admin/revenue-recovery/roi': typeof AuthenticatedAdminRevenueRecoveryRoiRoute
+  '/admin/revenue-recovery/time-waste': typeof AuthenticatedAdminRevenueRecoveryTimeWasteRoute
   '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
   '/admin/email': typeof AuthenticatedAdminEmailIndexRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
@@ -386,6 +476,16 @@ export interface FileRoutesById {
   '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
   '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
   '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
+  '/_authenticated/admin/revenue-recovery/ai-opportunity': typeof AuthenticatedAdminRevenueRecoveryAiOpportunityRoute
+  '/_authenticated/admin/revenue-recovery/appointment-recovery': typeof AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute
+  '/_authenticated/admin/revenue-recovery/automation-report': typeof AuthenticatedAdminRevenueRecoveryAutomationReportRoute
+  '/_authenticated/admin/revenue-recovery/efficiency-score': typeof AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute
+  '/_authenticated/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
+  '/_authenticated/admin/revenue-recovery/lead-conversion': typeof AuthenticatedAdminRevenueRecoveryLeadConversionRoute
+  '/_authenticated/admin/revenue-recovery/leakage': typeof AuthenticatedAdminRevenueRecoveryLeakageRoute
+  '/_authenticated/admin/revenue-recovery/missed-calls': typeof AuthenticatedAdminRevenueRecoveryMissedCallsRoute
+  '/_authenticated/admin/revenue-recovery/roi': typeof AuthenticatedAdminRevenueRecoveryRoiRoute
+  '/_authenticated/admin/revenue-recovery/time-waste': typeof AuthenticatedAdminRevenueRecoveryTimeWasteRoute
   '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
   '/_authenticated/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
   '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
@@ -428,6 +528,16 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/revenue-recovery/ai-opportunity'
+    | '/admin/revenue-recovery/appointment-recovery'
+    | '/admin/revenue-recovery/automation-report'
+    | '/admin/revenue-recovery/efficiency-score'
+    | '/admin/revenue-recovery/engine'
+    | '/admin/revenue-recovery/lead-conversion'
+    | '/admin/revenue-recovery/leakage'
+    | '/admin/revenue-recovery/missed-calls'
+    | '/admin/revenue-recovery/roi'
+    | '/admin/revenue-recovery/time-waste'
     | '/admin/crm/'
     | '/admin/email/'
     | '/admin/resources/'
@@ -467,6 +577,16 @@ export interface FileRouteTypes {
     | '/admin/resources/categories'
     | '/admin/resources/drafts'
     | '/admin/resources/new'
+    | '/admin/revenue-recovery/ai-opportunity'
+    | '/admin/revenue-recovery/appointment-recovery'
+    | '/admin/revenue-recovery/automation-report'
+    | '/admin/revenue-recovery/efficiency-score'
+    | '/admin/revenue-recovery/engine'
+    | '/admin/revenue-recovery/lead-conversion'
+    | '/admin/revenue-recovery/leakage'
+    | '/admin/revenue-recovery/missed-calls'
+    | '/admin/revenue-recovery/roi'
+    | '/admin/revenue-recovery/time-waste'
     | '/admin/crm'
     | '/admin/email'
     | '/admin/resources'
@@ -508,6 +628,16 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/resources/categories'
     | '/_authenticated/admin/resources/drafts'
     | '/_authenticated/admin/resources/new'
+    | '/_authenticated/admin/revenue-recovery/ai-opportunity'
+    | '/_authenticated/admin/revenue-recovery/appointment-recovery'
+    | '/_authenticated/admin/revenue-recovery/automation-report'
+    | '/_authenticated/admin/revenue-recovery/efficiency-score'
+    | '/_authenticated/admin/revenue-recovery/engine'
+    | '/_authenticated/admin/revenue-recovery/lead-conversion'
+    | '/_authenticated/admin/revenue-recovery/leakage'
+    | '/_authenticated/admin/revenue-recovery/missed-calls'
+    | '/_authenticated/admin/revenue-recovery/roi'
+    | '/_authenticated/admin/revenue-recovery/time-waste'
     | '/_authenticated/admin/crm/'
     | '/_authenticated/admin/email/'
     | '/_authenticated/admin/resources/'
@@ -693,6 +823,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCrmIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/revenue-recovery/time-waste': {
+      id: '/_authenticated/admin/revenue-recovery/time-waste'
+      path: '/revenue-recovery/time-waste'
+      fullPath: '/admin/revenue-recovery/time-waste'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryTimeWasteRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/roi': {
+      id: '/_authenticated/admin/revenue-recovery/roi'
+      path: '/revenue-recovery/roi'
+      fullPath: '/admin/revenue-recovery/roi'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryRoiRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/missed-calls': {
+      id: '/_authenticated/admin/revenue-recovery/missed-calls'
+      path: '/revenue-recovery/missed-calls'
+      fullPath: '/admin/revenue-recovery/missed-calls'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryMissedCallsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/leakage': {
+      id: '/_authenticated/admin/revenue-recovery/leakage'
+      path: '/revenue-recovery/leakage'
+      fullPath: '/admin/revenue-recovery/leakage'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryLeakageRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/lead-conversion': {
+      id: '/_authenticated/admin/revenue-recovery/lead-conversion'
+      path: '/revenue-recovery/lead-conversion'
+      fullPath: '/admin/revenue-recovery/lead-conversion'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryLeadConversionRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/engine': {
+      id: '/_authenticated/admin/revenue-recovery/engine'
+      path: '/revenue-recovery/engine'
+      fullPath: '/admin/revenue-recovery/engine'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryEngineRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/efficiency-score': {
+      id: '/_authenticated/admin/revenue-recovery/efficiency-score'
+      path: '/revenue-recovery/efficiency-score'
+      fullPath: '/admin/revenue-recovery/efficiency-score'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryEfficiencyScoreRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/automation-report': {
+      id: '/_authenticated/admin/revenue-recovery/automation-report'
+      path: '/revenue-recovery/automation-report'
+      fullPath: '/admin/revenue-recovery/automation-report'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryAutomationReportRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/appointment-recovery': {
+      id: '/_authenticated/admin/revenue-recovery/appointment-recovery'
+      path: '/revenue-recovery/appointment-recovery'
+      fullPath: '/admin/revenue-recovery/appointment-recovery'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue-recovery/ai-opportunity': {
+      id: '/_authenticated/admin/revenue-recovery/ai-opportunity'
+      path: '/revenue-recovery/ai-opportunity'
+      fullPath: '/admin/revenue-recovery/ai-opportunity'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryAiOpportunityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/resources/new': {
       id: '/_authenticated/admin/resources/new'
       path: '/resources/new'
@@ -845,6 +1045,16 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
   AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
   AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
+  AuthenticatedAdminRevenueRecoveryAiOpportunityRoute: typeof AuthenticatedAdminRevenueRecoveryAiOpportunityRoute
+  AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute: typeof AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute
+  AuthenticatedAdminRevenueRecoveryAutomationReportRoute: typeof AuthenticatedAdminRevenueRecoveryAutomationReportRoute
+  AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute: typeof AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute
+  AuthenticatedAdminRevenueRecoveryEngineRoute: typeof AuthenticatedAdminRevenueRecoveryEngineRoute
+  AuthenticatedAdminRevenueRecoveryLeadConversionRoute: typeof AuthenticatedAdminRevenueRecoveryLeadConversionRoute
+  AuthenticatedAdminRevenueRecoveryLeakageRoute: typeof AuthenticatedAdminRevenueRecoveryLeakageRoute
+  AuthenticatedAdminRevenueRecoveryMissedCallsRoute: typeof AuthenticatedAdminRevenueRecoveryMissedCallsRoute
+  AuthenticatedAdminRevenueRecoveryRoiRoute: typeof AuthenticatedAdminRevenueRecoveryRoiRoute
+  AuthenticatedAdminRevenueRecoveryTimeWasteRoute: typeof AuthenticatedAdminRevenueRecoveryTimeWasteRoute
   AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
   AuthenticatedAdminEmailIndexRoute: typeof AuthenticatedAdminEmailIndexRoute
   AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
@@ -872,6 +1082,26 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourcesDraftsRoute:
     AuthenticatedAdminResourcesDraftsRoute,
   AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
+  AuthenticatedAdminRevenueRecoveryAiOpportunityRoute:
+    AuthenticatedAdminRevenueRecoveryAiOpportunityRoute,
+  AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute:
+    AuthenticatedAdminRevenueRecoveryAppointmentRecoveryRoute,
+  AuthenticatedAdminRevenueRecoveryAutomationReportRoute:
+    AuthenticatedAdminRevenueRecoveryAutomationReportRoute,
+  AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute:
+    AuthenticatedAdminRevenueRecoveryEfficiencyScoreRoute,
+  AuthenticatedAdminRevenueRecoveryEngineRoute:
+    AuthenticatedAdminRevenueRecoveryEngineRoute,
+  AuthenticatedAdminRevenueRecoveryLeadConversionRoute:
+    AuthenticatedAdminRevenueRecoveryLeadConversionRoute,
+  AuthenticatedAdminRevenueRecoveryLeakageRoute:
+    AuthenticatedAdminRevenueRecoveryLeakageRoute,
+  AuthenticatedAdminRevenueRecoveryMissedCallsRoute:
+    AuthenticatedAdminRevenueRecoveryMissedCallsRoute,
+  AuthenticatedAdminRevenueRecoveryRoiRoute:
+    AuthenticatedAdminRevenueRecoveryRoiRoute,
+  AuthenticatedAdminRevenueRecoveryTimeWasteRoute:
+    AuthenticatedAdminRevenueRecoveryTimeWasteRoute,
   AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
   AuthenticatedAdminEmailIndexRoute: AuthenticatedAdminEmailIndexRoute,
   AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
