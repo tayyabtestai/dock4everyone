@@ -146,7 +146,7 @@ function PublicCalculator() {
             <p className="eyebrow mb-4">Choose your industry</p>
             <h2 className="font-serif text-4xl leading-tight text-ink">Which best describes your business?</h2>
             <div className="mt-8 grid gap-2 sm:grid-cols-2">
-              {config.industries.map((ind) => (
+              {config.industries.map((ind: string) => (
                 <button
                   key={ind}
                   onClick={() => { setIndustry(ind); setStage("questions"); }}
