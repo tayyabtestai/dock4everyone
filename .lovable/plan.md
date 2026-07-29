@@ -1,113 +1,140 @@
-## Assessment Engine — scope
 
-A new Owner Console module. One engine, N assessments. Public pages live only at `/assessment/$slug` (never linked from the site). No changes to existing modules, layouts, or the public site.
+# Revenue Recovery Platform — Architecture Phase
 
-## Database (Lovable Cloud migration)
+This phase establishes the *infrastructure* for every current and future calculator. No dummy questions, calculations, recommendations, or reports are generated. Existing design system, typography, sidebar, CRM structure and public site remain untouched.
 
-Four new tables in `public`, with GRANTs + RLS in the same migration.
+## 1. Database (single migration)
 
-- `assessments` — one row per assessment
-  - `id uuid pk`, `slug text unique not null`, `name text`, `industry text`,
-    `status assessment_status default 'draft'` (enum: draft/published/archived),
-    `headline`, `subheadline`, `description`, `estimated_minutes int`,
-    `primary_cta_label`, `primary_cta_url`, `secondary_cta_label`, `secondary_cta_url`,
-    `seo_title`, `seo_description`, `featured_image_url`, `og_image_url`,
-    `questions jsonb default '[]'` — ordered array of question configs
-    (id, type, title, description, placeholder, required, default, validation, help, error, options, conditional),
-    `formulas jsonb default '[]'` — ordered variable list (id, label, expression AST or step list, format),
-    `result_config jsonb default '{}'` — headline, score, benchmark, summary, recommendations, CTAs, sections,
-    `lead_fields jsonb default '{}'` — toggles + consent copy,
-    `ai_recommendations jsonb default '[]'` — static rules (condition → recommendation, priority),
-    `created_at`, `updated_at` (trigger `tg_set_updated_at`).
-- `assessment_templates` — reusable presets (`name`, `industry`, `questions`, `formulas`, `result_config`, `ai_recommendations`). Seed rows via migration for the 8 example templates.
-- `assessment_submissions` — one row per completed submission
-  - `assessment_id fk`, `lead_id fk null`, `answers jsonb`, `computed jsonb`
-    (formula outputs), `score numeric null`, `recommendations jsonb`,
-    `utm jsonb`, `landing_page`, `referrer`, `country`, `device`, `browser`,
-    `ip_address`, `user_agent`, `duration_seconds`, `completed boolean`,
-    `created_at`.
-- `assessment_events` — lightweight funnel tracker
-  - `assessment_id`, `type` (view/start/step/complete/drop), `step_index null`,
-    `session_id`, `created_at`.
+Tables in `public`, each with RLS + GRANTs:
 
-### Grants & RLS
+- `rr_calculators` — one row per calculator product
+  - `slug` (unique, url-safe), `key` (stable enum-like: `leakage`, `ai-opportunity`, …), `name`, `tagline`, `description`, `status` (`draft` | `published` | `archived`), `industries` (text[]), `settings` jsonb (thank-you copy, CTA label, Calendly URL, PDF template ref, animation flags), `published_at`, `archived_at`, `created_by`.
+- `rr_calculator_versions` — immutable version history
+  - `calculator_id`, `version` (int), `snapshot` jsonb (full config: questions, scoring, recommendations, industry overrides, copy), `published` bool, `created_by`.
+- `rr_questions` — working (draft) question set per calculator
+  - `calculator_id`, `order_index`, `type` (single/multi/number/currency/percentage/slider/rating/yes-no/short-text/long-text), `industry` (nullable — null = all), `key`, `label`, `help`, `required`, `options` jsonb, `validation` jsonb, `conditions` jsonb (branching), `weight` numeric, `scoring` jsonb, `tooltip`, `insight` text.
+- `rr_scoring_rules` — reusable scoring configuration per calculator (weights, industry multipliers, formulas as data). Structured jsonb, not code.
+- `rr_recommendations` — per-calculator recommendation library (triggers as data: score band, industry, answer conditions).
+- `rr_submissions` — one per public completion
+  - `calculator_id`, `version_id`, `slug` (denormalised), `industry`, `answers` jsonb, `score` numeric, `score_breakdown` jsonb, `financial_impact` jsonb, `lead_id` (fk `leads`), `device`, `traffic_source`, `referrer`, `duration_ms`, `completed_at`.
+- `rr_events` — funnel analytics (`view`, `start`, `question_answered`, `complete`, `report_viewed`, `pdf_downloaded`, `cta_clicked`, `call_booked`)
+  - `calculator_id`, `slug`, `session_id`, `event`, `payload` jsonb, `industry`, `device`, `source`, `created_at`.
 
-- `assessments`: admins full CRUD; `anon`+`authenticated` SELECT `WHERE status = 'published'` (needed for public page).
-- `assessment_templates`: admins full CRUD; authenticated SELECT for the builder.
-- `assessment_submissions`: admins SELECT/DELETE. INSERT allowed to `anon`+`authenticated` (public submits); no UPDATE.
-- `assessment_events`: same as submissions — anon INSERT, admin SELECT.
+RLS:
+- Admin (`has_role(auth.uid(),'admin')`) full read/write on all `rr_*` tables.
+- `anon` + `authenticated` may INSERT into `rr_events` and `rr_submissions` when the referenced `rr_calculators.status = 'published'` (checked via SECURITY DEFINER helper `rr_is_published(uuid)`).
+- `anon` may SELECT published calculator snapshots via a security-definer function `rr_get_published_by_slug(text)` returning the current published version snapshot only — no direct SELECT grant on tables.
+- Submissions/events never readable by anon.
 
-Extend `leads` linkage by adding a `submission_id` to the submission row and reusing the existing `leads` table (insert a lead as part of the server function that finalizes a submission).
+GRANTs on each table per project conventions; anon gets only INSERT on `rr_events`/`rr_submissions`, EXECUTE on the two definer functions.
 
-## Server functions
+## 2. Server functions (`src/lib/revenue-recovery/*.functions.ts`)
 
-`src/lib/assessments.functions.ts`:
-- `listAssessments`, `getAssessment(id)`, `getAssessmentBySlug(slug)` (public, published-only), `upsertAssessment`, `duplicateAssessment`, `archiveAssessment`, `deleteAssessment` — admin-gated via `requireSupabaseAuth` + `has_role`.
-- `listTemplates`, `applyTemplate(assessmentId, templateId)`.
-- `submitAssessment({ slug, answers, leadFields, utm, meta })` — public, no auth. Loads assessment, evaluates formulas server-side (safe evaluator, no `eval`), applies AI recommendation rules, inserts a `leads` row + `assessment_submissions` row atomically, returns the computed result payload for the results screen.
-- `trackAssessmentEvent({ slug, type, stepIndex, sessionId })` — public, best-effort insert.
-- `assessmentAnalytics(id)` — admin — aggregates from `assessment_events`/`assessment_submissions`.
+Authenticated (`requireSupabaseAuth` + admin check):
+- `listCalculators`, `getCalculator(id)`, `createCalculator`, `updateCalculator`, `duplicateCalculator`, `archiveCalculator`, `deleteCalculator`.
+- `listVersions`, `publishCalculator` (writes new `rr_calculator_versions` snapshot, flips status), `revertToVersion`.
+- `upsertQuestion`, `reorderQuestions`, `deleteQuestion`.
+- `upsertScoringRules`, `upsertRecommendations`.
+- `getCalculatorAnalytics(id, range)` — aggregates from `rr_events` + `rr_submissions`.
+- `listSubmissions(calculatorId, filters)`.
 
-Formula evaluator: interpret the stored `formulas` array as ordered steps `{ id, label, op: add|sub|mul|div|pct|round|min|max|avg|const|var, args: [ref] }`. No string eval — deterministic and safe.
+Public (no auth, via server routes for raw HTTP where needed):
+- `src/routes/api/public/rr/$slug/config.ts` GET — returns published snapshot.
+- `src/routes/api/public/rr/$slug/event.ts` POST — records analytics events.
+- `src/routes/api/public/rr/$slug/submit.ts` POST — validates answers against the published snapshot, runs scoring engine, creates `leads` + `rr_submissions`, returns report payload.
 
-## Admin routes (Owner Console)
+All signature-verified? No secret needed — inputs re-validated server-side, rate-limit acceptable at platform layer.
 
-New leaf routes under `src/routes/_authenticated/`:
-- `admin.assessments.tsx` (layout with `<Outlet />`) — optional; use flat dot-routes:
-- `admin.assessments.index.tsx` — All Assessments table (search, sort, filters, bulk archive/delete, row actions: Edit, Duplicate, Analytics, Copy Link, Archive, Delete).
-- `admin.assessments.new.tsx` — starts a blank or template-seeded draft, redirects to editor.
-- `admin.assessments.$id.tsx` — Builder with tabs:
-  1. General (name, slug, industry, headline, CTAs, SEO, images, status)
-  2. Questions (drag-reorder list; per-question inspector; supports all 18 types; conditional logic = simple `{ ifQuestionId, op, value }`)
-  3. Formulas (visual step list, references question ids or prior variables, live preview)
-  4. Result (editable headline, dynamic tokens like `{{monthlyLoss}}`, sections, CTAs)
-  5. AI Recommendations (rule list: `when <var> <op> <value>` → recommendation, priority, CTA)
-  6. Lead Capture (toggle fields, consent copy)
-  7. Share (public URL, copy, preview, QR — QR via `qrcode` lib)
-- `admin.assessments.templates.tsx` — grid of templates, "Use template" creates a new draft from it.
-- `admin.assessments.analytics.tsx` — pick an assessment → per-assessment analytics view.
+## 3. Engine (pure TypeScript, `src/lib/revenue-recovery/engine/`)
 
-Sidebar update in `src/components/admin/owner-console.tsx`: insert new group "Assessment Engine" with children All Assessments / New Assessment / Templates / Analytics. Icon: `ClipboardList` (or similar). No other sidebar changes.
+Reusable, calculator-agnostic modules. No calculator content lives here.
 
-## Public experience
+- `types.ts` — `CalculatorConfig`, `Question`, `Answer`, `ScoringRules`, `Recommendation`, `ReportPayload`, `Industry`.
+- `validation.ts` — validates answers against question definitions (required, min/max, regex, etc.).
+- `branching.ts` — evaluates `conditions` to determine visible questions.
+- `scoring.ts` — data-driven scoring: weighted sum, industry multipliers, band mapping, financial-impact formulas defined as JSON expressions (add/sub/mul/div/pct/min/max/if — same evaluator idea, hardened).
+- `recommendations.ts` — filters recommendation library by score band + answer conditions.
+- `report.ts` — composes `ReportPayload` (hero, score, financial impact, charts data, recommendations, action plan, next steps) from config + answers + scoring output. Content strings come from config, never hardcoded.
 
-`src/routes/assessment.$slug.tsx` — SSR-safe route.
-- Loader calls `getAssessmentBySlug` (public, published-only). 404 via `notFound()` otherwise.
-- Head: uses assessment `seo_title` / `seo_description` / `og_image_url`.
-- Component: Dock typography, serif hero, multi-step wizard (one question per step or grouped), progress bar, Previous/Next, auto-save to `sessionStorage` per slug, `trackAssessmentEvent` on view/start/step/complete.
-- Final step: lead capture form (only enabled fields). On submit: `submitAssessment` → results screen showing dynamic result config + AI recommendations + CTAs.
-- Fully responsive; no admin chrome; not linked from nav, home, sitemap, or resources.
+Engine has zero knowledge of any specific calculator. Adding a new calculator = inserting a row + config, no code changes.
 
-`robots.txt` / sitemap: do not include `/assessment/*`.
+## 4. Reusable UI components (`src/components/revenue-recovery/`)
 
-## Reusable engine internals
+All match existing Dock typography, spacing, colors — no new tokens.
 
-`src/lib/assessment-engine/`:
-- `types.ts` — Assessment, Question, Formula, ResultConfig, Recommendation.
-- `evaluator.ts` — pure formula evaluation from answers → computed vars.
-- `recommendations.ts` — rule evaluation → ranked recommendations.
-- `render-tokens.ts` — `{{var}}` interpolation with formatters (currency/percent/number).
-- `wizard/` — public components (Step, ProgressBar, QuestionRenderer for all 18 types).
-- `builder/` — admin components (QuestionList, QuestionInspector, FormulaBuilder, ResultBuilder, RecommendationBuilder, LeadFieldsBuilder, SharePanel).
+- `QuestionCard`, one per type (`SingleChoice`, `MultiChoice`, `NumberInput`, `CurrencyInput`, `PercentInput`, `SliderInput`, `RatingInput`, `YesNoInput`, `ShortText`, `LongText`) sharing a wrapper.
+- `ProgressDots` (milestone dots, no numbers — matches earlier pattern).
+- `InsightCallout`, `AnalysisScreen`, `LoadingScreen`.
+- `ResultsHero`, `ScoreCard`, `FinancialImpactCard`, `ChartBlock` (thin `recharts` wrapper, monochrome), `RecommendationList`, `ActionPlan`, `CTACard`, `LeadCaptureForm`, `PdfExportButton` (stub hook).
+- `PublishBar` (admin): Draft ↔ Preview ↔ Publish, copy public link, version history.
 
-The 18 question types are all rendered through one `QuestionRenderer` switching on `type`.
+Every component is a shell — it renders whatever the config/report payload provides. No copy is hardcoded.
 
-## Design
+## 5. Admin routes
 
-- Reuse existing tokens (`bg-canvas`, `text-ink`, `border-border`, serif headings, `eyebrow`).
-- No new colors, no gradients. Tables/cards match existing admin patterns.
-- Public wizard mirrors `/resources` / `/about` typography.
+Under existing sidebar group (unchanged nav structure). Each existing calculator route becomes a real editor mounted on the shared admin shell:
 
-## Non-goals (explicit)
+- `/admin/revenue-recovery` — platform overview (existing, extended with real analytics roll-up).
+- `/admin/revenue-recovery/engine` — hub listing calculators (existing, extended with status + last published).
+- `/admin/revenue-recovery/$key` — calculator admin (replaces the 9 placeholder routes)
+  - Tabs: **General** (title/description/industries/copy/CTA/Calendly/PDF), **Questions** (visual builder, per-industry override, branching), **Scoring** (weights, multipliers, bands, formulas), **Recommendations** (library + triggers), **Report** (section toggles, copy), **Analytics** (funnel + submissions), **Publish** (draft/preview/publish, versions, public link).
+- `/admin/revenue-recovery/$key/preview` — admin-only preview of current draft.
+- `/admin/revenue-recovery/$key/submissions/$id` — single submission drill-down.
 
-- No changes to home, nav, footer, resources, leads, CRM, pipeline, email, analytics, settings, or the existing dashboard.
-- No AI provider wiring yet — AI Recommendations run from configured rules (deterministic). Hooking a live model is a later step.
-- No file-upload storage buckets for question uploads yet — the "File Upload" question type is accepted in the builder but marked "Coming soon" at runtime to avoid new bucket + RLS work in this PR.
-- Booked-call metric shows `—` until a booking source exists (per your no-fake-data rule).
+Existing 9 placeholder route files are replaced with a single dynamic `$key` route; the sidebar links continue to work because keys match today's slugs.
+
+## 6. Public routes
+
+- `src/routes/rr.$slug.tsx` — public calculator experience (landing → industry select if calculator supports multiple → question flow → analysis screen → lead capture → report). SSR loader calls the public `config` endpoint. Emits analytics events. No admin chrome, no auth wall.
+- `src/routes/rr.$slug.report.$submissionId.tsx` — shareable report view.
+
+URLs live under `/rr/<slug>` to avoid colliding with existing top-level routes and to keep the public site untouched. `slug` is user-editable per calculator (defaults to key). Root site nav is not modified.
+
+## 7. Lifecycle & versioning
+
+- Editing writes to the working tables (`rr_questions`, `rr_scoring_rules`, `rr_recommendations`) + `rr_calculators.settings`.
+- **Publish** serializes the working state into `rr_calculator_versions.snapshot`, increments `version`, marks it `published`, sets `rr_calculators.status='published'`, `published_at=now()`.
+- Public endpoints only ever read the latest `published` snapshot — never the working tables. This is the isolation guarantee.
+- **Archive**, **duplicate** (deep copy of working state + settings, fresh slug), **delete** (cascades), **revert** (copies a version's snapshot back into the working tables).
+
+## 8. CRM integration
+
+`rr_submissions` insert path creates/updates a `leads` row with: name, email, phone, company, industry, website, source = `rr:<slug>`, plus a link back to the submission. Answers, score and financial estimate are stored on the submission and surfaced on the lead detail via a new "Revenue Recovery" panel (small addition to existing lead view — no CRM restructure).
+
+## 9. Analytics
+
+`getCalculatorAnalytics` aggregates `rr_events` + `rr_submissions` into: views, starts, completes, completion %, avg completion time, industry breakdown, device breakdown, traffic source, conversions, bookings, downloads. Rendered inside each calculator's Analytics tab; platform overview shows the roll-up.
+
+## 10. Explicitly NOT in this phase
+
+- No questions, formulas, recommendations, or report copy for any specific calculator.
+- No PDF template implementation (button + hook stub only).
+- No Calendly embedding beyond storing/opening a URL.
+- No changes to public site nav, home, CRM tables, sidebar structure, typography, colors, spacing.
 
 ## Technical notes
 
-- Migration is one file: enum + 4 tables + GRANTs + RLS + policies + updated_at triggers + template seed inserts.
-- `qrcode` added via `bun add qrcode` for the Share panel; `@dnd-kit/core` + `@dnd-kit/sortable` for drag reorder (already common; will add if absent).
-- Public submit path uses the server publishable client pattern for reads + `supabaseAdmin` (loaded inside handler) only for the atomic insert, after basic zod validation and per-IP rate check.
-- All admin server fns use `requireSupabaseAuth` + `has_role('admin')`.
+- Engine is pure TS, unit-testable, isomorphic — usable in server functions (scoring on submit) and client (live preview in admin, live totals in wizard).
+- Formulas are stored as JSON AST (`{op:'mul', args:[{ref:'answers.calls_missed'}, {ref:'answers.avg_deal_size'}]}`) evaluated by a whitelisted interpreter — no `eval`, no code storage.
+- All new files live under `src/lib/revenue-recovery/`, `src/components/revenue-recovery/`, `src/routes/_authenticated/admin.revenue-recovery.*`, `src/routes/rr.$slug.*`, and `src/routes/api/public/rr/*`.
+- Adding a new calculator later = create row + config in admin UI. Zero code changes.
+
+```text
+Data flow
+
+  Admin edits ──► rr_questions / rr_scoring_rules / rr_recommendations
+                          │
+                          ▼
+                    Publish action
+                          │
+                          ▼
+              rr_calculator_versions (immutable snapshot)
+                          │
+     Public /rr/<slug> ◄──┘ (reads latest published snapshot only)
+                          │
+        submit ──► engine.score() ──► rr_submissions + leads
+        events ──► rr_events
+                          │
+                          ▼
+              Admin Analytics tab + platform overview
+```
