@@ -153,7 +153,7 @@ function PublicCalculator() {
   function next() {
     if (!current) { setStage("capture"); return; }
     const err = validateAnswer(current, answers[current.key] ?? null);
-    if (err) { setError(err); return; }
+    if (err) { setError(err.message); return; }
     if (cursor + 1 < visible.length) setCursor(cursor + 1);
     else { track("questions_complete"); setStage("capture"); }
   }
