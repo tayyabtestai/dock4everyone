@@ -11,6 +11,8 @@ export function buildReport(
   const financialImpact = computeFinancialImpact(config, answers, score, industry);
   const recommendations = selectRecommendations(config, answers, band, industry);
   const scale = config.scoring.scale ?? { min: 0, max: 100 };
+  const labels: Record<string, string> = {};
+  for (const q of config.questions) if (q.label) labels[q.key] = q.label;
   return {
     hero: { eyebrow: config.tagline, title: config.name, body: config.description },
     score: { value: score, scale, band },
@@ -23,6 +25,9 @@ export function buildReport(
       cta: { label: config.settings.ctaLabel, href: config.settings.ctaHref ?? config.settings.calendlyUrl },
     },
     breakdown,
+    labels,
+    industry: industry ?? null,
+    generatedAt: new Date().toISOString(),
     scoreValue: score,
   };
 }

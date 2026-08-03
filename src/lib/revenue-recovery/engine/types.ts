@@ -133,4 +133,8 @@ export type ReportPayload = {
   actionPlan: { title: string; steps: string[] };
   nextSteps: { title: string; body: string; cta?: { label?: string; href?: string } };
   breakdown: Record<string, number>;
+  /** Human labels for breakdown/impact keys, resolved from question labels. */
+  labels?: Record<string, string>;
+  industry?: string | null;
+  generatedAt?: string;
 };
