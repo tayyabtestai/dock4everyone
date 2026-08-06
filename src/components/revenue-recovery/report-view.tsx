@@ -40,8 +40,8 @@ export function ReportView({ report, layout, businessName }: Props) {
 
       {/* Headline numbers */}
       <section className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Estimated monthly revenue leakage" value={money(monthly)} large />
-        <Stat label="Estimated annual revenue leakage" value={money(annual)} large />
+        <Stat label={layout.monthlyLabel ?? "Estimated monthly impact"} value={money(monthly)} large />
+        <Stat label={layout.annualLabel ?? "Estimated annual impact"} value={money(annual)} large />
         <div className="rounded-lg border border-border bg-white p-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{layout.scoreLabel}</p>
           <p className="mt-2 font-serif text-4xl text-ink">

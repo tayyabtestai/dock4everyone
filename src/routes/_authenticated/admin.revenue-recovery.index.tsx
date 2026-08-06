@@ -47,8 +47,8 @@ function Overview() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CALCULATORS.map((c) => (
           <Link
-            key={c.slug}
-            to={`/admin/revenue-recovery/${c.slug}` as never}
+            key={c.key}
+            to={`/admin/revenue-recovery/${c.key}` as never}
             className="group flex flex-col justify-between rounded-lg border border-border bg-white p-6 transition-colors hover:border-ink/40"
           >
             <div>

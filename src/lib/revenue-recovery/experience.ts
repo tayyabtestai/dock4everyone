@@ -33,6 +33,8 @@ export type ExperienceConfig = {
 export type ReportLayout = {
   monthlyKey?: string;
   annualKey?: string;
+  monthlyLabel?: string;
+  annualLabel?: string;
   scoreLabel: string;
   benchmarks: { label: string; you?: number; industry?: number; unit?: string }[];
   outcomes: string[];
@@ -103,6 +105,8 @@ export function resolveExperience(config: CalculatorConfig): ExperienceConfig {
     report: {
       monthlyKey: report.monthlyKey,
       annualKey: report.annualKey,
+      monthlyLabel: report.monthlyLabel,
+      annualLabel: report.annualLabel,
       scoreLabel: report.scoreLabel ?? "Revenue Recovery Score",
       benchmarks: arr(report.benchmarks) ?? [],
       outcomes: arr(report.outcomes) ?? [],
