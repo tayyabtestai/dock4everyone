@@ -286,6 +286,9 @@ function QuestionsTab({ data }: { data: any }) {
               </select>
             </Field>
             <Field label="Help text"><input className={input} value={editing.help ?? ""} onChange={(e) => setEditing({ ...editing, help: e.target.value })} /></Field>
+            <Field label="Micro insight (shown under the question)"><input className={input} value={editing.insight ?? ""} onChange={(e) => setEditing({ ...editing, insight: e.target.value })} /></Field>
+            <Field label="Tooltip"><input className={input} value={editing.tooltip ?? ""} onChange={(e) => setEditing({ ...editing, tooltip: e.target.value })} /></Field>
+            <Field label="Order"><input type="number" className={input} value={editing.order_index ?? 0} onChange={(e) => setEditing({ ...editing, order_index: Number(e.target.value) })} /></Field>
             <Field label="Options (one per line: value|label|score)">
               <textarea className={`${input} min-h-[120px] font-mono text-xs`} value={editing._optionsText ?? ""} onChange={(e) => setEditing({ ...editing, _optionsText: e.target.value })} />
             </Field>
