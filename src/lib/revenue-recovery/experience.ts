@@ -105,6 +105,8 @@ export function resolveExperience(config: CalculatorConfig): ExperienceConfig {
     report: {
       monthlyKey: report.monthlyKey,
       annualKey: report.annualKey,
+      monthlyLabel: report.monthlyLabel,
+      annualLabel: report.annualLabel,
       scoreLabel: report.scoreLabel ?? "Revenue Recovery Score",
       benchmarks: arr(report.benchmarks) ?? [],
       outcomes: arr(report.outcomes) ?? [],
