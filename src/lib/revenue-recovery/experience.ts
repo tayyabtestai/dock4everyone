@@ -33,6 +33,8 @@ export type ExperienceConfig = {
 export type ReportLayout = {
   monthlyKey?: string;
   annualKey?: string;
+  monthlyLabel?: string;
+  annualLabel?: string;
   scoreLabel: string;
   benchmarks: { label: string; you?: number; industry?: number; unit?: string }[];
   outcomes: string[];
