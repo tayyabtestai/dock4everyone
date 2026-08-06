@@ -123,6 +123,20 @@ function PublicCalculator() {
 
   useEffect(() => { track("view"); }, [track]);
 
+  // Enter advances — keeps the conversation moving without reaching for the mouse.
+  useEffect(() => {
+    if (stage !== "questions") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+      const el = e.target as HTMLElement | null;
+      if (el && el.tagName === "TEXTAREA") return;
+      e.preventDefault();
+      next();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   useEffect(() => {
     const saved = loadProgress(slug);
     if (saved && Object.keys(saved.answers ?? {}).length) {
