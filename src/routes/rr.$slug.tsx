@@ -266,7 +266,19 @@ function PublicCalculator() {
                 </div>
               </div>
             )}
-            <Guide pose="welcome" size="lg" className="mt-12" message={config.tagline || undefined} />
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              <li>About three minutes</li>
+              <li>· No obligation</li>
+              <li>· Your answers stay private</li>
+              <li>· Results on screen straight away</li>
+            </ul>
+            <Guide
+              pose="welcome"
+              size="lg"
+              bubble
+              className="mt-12"
+              message="Hello — I'll walk you through this. Plain questions about how your business runs, no jargon, and you can stop any time."
+            />
           </div>
         )}
 
@@ -274,6 +286,9 @@ function PublicCalculator() {
           <div className="animate-in fade-in duration-500">
             <p className="eyebrow mb-4">Choose your industry</p>
             <h2 className="font-serif text-4xl leading-tight text-ink">{exp.industryPrompt}</h2>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              This tailors the questions and the benchmarks we compare you against.
+            </p>
             <div className="mt-8 grid gap-2 sm:grid-cols-2">
               {config.industries.map((ind: string) => (
                 <button
@@ -283,6 +298,7 @@ function PublicCalculator() {
                 >{ind}</button>
               ))}
             </div>
+            <Guide pose="encourage" size="sm" bubble className="mt-10" message="Pick the closest match — nothing here is locked in." />
           </div>
         )}
 
@@ -303,7 +319,7 @@ function PublicCalculator() {
                 This calculator doesn't have any questions yet.
               </p>
             ) : (
-              <div key={current.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div key={current.id} className={`animate-in fade-in slide-in-from-bottom-2 duration-500 ${flash ? "opacity-60 transition-opacity" : ""}`}>
                 <QuestionCard
                   question={current}
                   value={answers[current.key] ?? null}
@@ -315,18 +331,21 @@ function PublicCalculator() {
                     {liveNote}
                   </p>
                 )}
-                <Guide pose={pose} size="sm" className="mt-8" />
+                <Guide pose={pose} size="sm" bubble className="mt-8" message={GUIDE_LINES[milestoneIdx % GUIDE_LINES.length]} />
               </div>
             )}
 
             <div className="mt-10 flex items-center justify-between">
               <button onClick={back} className="text-sm text-ink/60 transition hover:text-ink">Back</button>
-              <button
-                onClick={next}
-                className="rounded-md bg-ink px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-              >
-                Continue
-              </button>
+              <div className="flex items-center gap-4">
+                <span className="hidden text-[11px] uppercase tracking-[0.16em] text-muted-foreground sm:inline">Saved automatically</span>
+                <button
+                  onClick={next}
+                  className="rounded-md bg-ink px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+                >
+                  Continue
+                </button>
+              </div>
             </div>
           </div>
         )}
