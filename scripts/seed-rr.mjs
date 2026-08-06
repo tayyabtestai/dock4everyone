@@ -1,6 +1,6 @@
 // Generates SQL that seeds the Revenue Recovery calculators with real,
 // admin-editable question sets, scoring rules and recommendations.
-import { writeFileSync } from "node:fs";
+import { createClient } from "@supabase/supabase-js";
 
 const INDUSTRIES = [
   "Dental Practice","Medical Clinic","Law Firm","Accounting Firm","Real Estate Agency",
@@ -409,9 +409,9 @@ CALCS.push({
   ],
 });
 
-// ---------- SQL generation ----------
-const q = (s) => (s == null ? "null" : `'${String(s).replace(/'/g, "''")}'`);
-const j = (v) => `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
+// ---------- apply ----------
+const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+const ck = (r) => { if (r.error) throw new Error(r.error.message); return r.data; };
 
 const BANDS = (max) => [
   { key: "critical", label: "Critical", min: 0, max: Math.round(max * 0.4), copy: "There are significant gaps here. The good news is that the biggest ones are usually the easiest to close, and the impact shows up quickly." },
@@ -420,61 +420,53 @@ const BANDS = (max) => [
   { key: "strong", label: "Strong", min: Math.round(max * 0.8) + 1, max: max, copy: "You are ahead of most businesses in your field. The opportunity now is compounding what already works." },
 ];
 
-let sql = ["begin;"];
-
-// remove retired calculators
-sql.push(`delete from rr_calculators where key = any(array[${DROP.map(q).join(",")}]) or key like '%-copy-%';`);
+const all = ck(await db.from("rr_calculators").select("id,key"));
+for (const row of all) {
+  if (KEEP.includes(row.key)) continue;
+  ck(await db.from("rr_calculators").delete().eq("id", row.id));
+  console.log("removed", row.key);
+}
 
 for (const c of CALCS) {
   const scored = c.questions.filter((x) => x.weight);
-  const maxScore = scored.reduce((s, x) => s + Math.max(...(x.options ?? [{ score: 0 }]).map((op) => op.score ?? 0), 0), 0) || 100;
-  const scoring = {
-    method: "weighted_sum",
-    scale: { min: 0, max: maxScore },
-    bands: BANDS(maxScore),
-    financialImpact: c.impact,
-  };
-  sql.push(`
-insert into rr_calculators (key, slug, name, tagline, description, outcome, industries, settings, status)
-values (${q(c.key)}, ${q(c.slug)}, ${q(c.name)}, ${q(c.tagline)}, ${q(c.description)}, ${q(c.outcome)},
-        ${`array[${INDUSTRIES.map(q).join(",")}]::text[]`}, ${j(c.settings)}, 'draft')
-on conflict (key) do update set slug = excluded.slug, name = excluded.name, tagline = excluded.tagline,
-  description = excluded.description, outcome = excluded.outcome, industries = excluded.industries,
-  settings = excluded.settings;`);
+  const maxScore = scored.reduce((s, x) => s + Math.max(...(x.options ?? []).map((op) => op.score ?? 0), 0), 0) || 100;
+  const scoring = { method: "weighted_sum", scale: { min: 0, max: maxScore }, bands: BANDS(maxScore), financialImpact: c.impact };
 
-  sql.push(`delete from rr_questions where calculator_id = (select id from rr_calculators where key = ${q(c.key)});`);
-  c.questions.forEach((x, i) => {
-    sql.push(`insert into rr_questions (calculator_id, order_index, section, industry, type, key, label, help, tooltip, insight, required, options, validation, conditions, weight, scoring)
-values ((select id from rr_calculators where key = ${q(c.key)}), ${i}, ${q(x.section ?? null)}, ${q(x.industry ?? null)}, ${q(x.type)}, ${q(x.key)}, ${q(x.label)}, ${q(x.help ?? "")}, ${q(x.tooltip ?? "")}, ${q(x.insight ?? "")}, ${x.required ? "true" : "false"}, ${j(x.options ?? [])}, ${j(x.validation ?? {})}, ${j(x.conditions ?? [])}, ${x.weight ?? 0}, '{}'::jsonb);`);
-  });
+  const base = { key: c.key, slug: c.slug, name: c.name, tagline: c.tagline, description: c.description, outcome: c.outcome, industries: INDUSTRIES, settings: c.settings };
+  const existing = ck(await db.from("rr_calculators").select("id").eq("key", c.key).maybeSingle());
+  let id;
+  if (existing) { id = existing.id; ck(await db.from("rr_calculators").update(base).eq("id", id)); }
+  else { id = ck(await db.from("rr_calculators").insert(base).select("id").single()).id; }
 
-  sql.push(`delete from rr_scoring_rules where calculator_id = (select id from rr_calculators where key = ${q(c.key)});`);
-  sql.push(`insert into rr_scoring_rules (calculator_id, industry, config) values ((select id from rr_calculators where key = ${q(c.key)}), null, ${j(scoring)});`);
+  ck(await db.from("rr_questions").delete().eq("calculator_id", id));
+  ck(await db.from("rr_questions").insert(c.questions.map((x, i) => ({
+    calculator_id: id, order_index: i, section: x.section ?? null, industry: x.industry ?? null,
+    type: x.type, key: x.key, label: x.label, help: x.help ?? "", tooltip: x.tooltip ?? "", insight: x.insight ?? "",
+    required: !!x.required, options: x.options ?? [], validation: x.validation ?? {}, conditions: x.conditions ?? [],
+    weight: x.weight ?? 0, scoring: {},
+  }))));
 
-  sql.push(`delete from rr_recommendations where calculator_id = (select id from rr_calculators where key = ${q(c.key)});`);
-  c.recommendations.forEach((r, i) => {
-    sql.push(`insert into rr_recommendations (calculator_id, order_index, industry, title, body, triggers, cta)
-values ((select id from rr_calculators where key = ${q(c.key)}), ${i}, null, ${q(r.title)}, ${q(r.body)}, ${j(r.band ? { band: r.band } : {})}, '{}'::jsonb);`);
-  });
+  ck(await db.from("rr_scoring_rules").delete().eq("calculator_id", id));
+  ck(await db.from("rr_scoring_rules").insert({ calculator_id: id, industry: null, config: scoring }));
 
-  // publish: snapshot current content as a new version
-  sql.push(`
-with c as (select * from rr_calculators where key = ${q(c.key)}),
- nv as (select coalesce(max(version),0)+1 v from rr_calculator_versions where calculator_id = (select id from c)),
- ins as (
-   insert into rr_calculator_versions (calculator_id, version, snapshot, is_published)
-   select c.id, nv.v, jsonb_build_object(
-     'calculator', to_jsonb(c),
-     'questions', coalesce((select jsonb_agg(to_jsonb(q) order by q.order_index) from rr_questions q where q.calculator_id = c.id), '[]'::jsonb),
-     'scoring', coalesce((select jsonb_agg(to_jsonb(s)) from rr_scoring_rules s where s.calculator_id = c.id), '[]'::jsonb),
-     'recommendations', coalesce((select jsonb_agg(to_jsonb(r) order by r.order_index) from rr_recommendations r where r.calculator_id = c.id), '[]'::jsonb)
-   ), true from c, nv returning calculator_id, version
- )
-update rr_calculators set status = 'published', published_version = ins.version, published_at = now()
-from ins where rr_calculators.id = ins.calculator_id;`);
-  sql.push(`update rr_calculator_versions v set is_published = (v.version = (select published_version from rr_calculators c where c.id = v.calculator_id)) where v.calculator_id = (select id from rr_calculators where key = ${q(c.key)});`);
+  ck(await db.from("rr_recommendations").delete().eq("calculator_id", id));
+  ck(await db.from("rr_recommendations").insert(c.recommendations.map((r, i) => ({
+    calculator_id: id, order_index: i, industry: null, title: r.title, body: r.body,
+    triggers: r.band ? { band: r.band } : {}, cta: {},
+  }))));
+
+  // publish
+  const [calc, questions, rules, recs, vers] = await Promise.all([
+    db.from("rr_calculators").select("*").eq("id", id).single(),
+    db.from("rr_questions").select("*").eq("calculator_id", id).order("order_index"),
+    db.from("rr_scoring_rules").select("*").eq("calculator_id", id),
+    db.from("rr_recommendations").select("*").eq("calculator_id", id).order("order_index"),
+    db.from("rr_calculator_versions").select("version").eq("calculator_id", id).order("version", { ascending: false }).limit(1),
+  ]);
+  const version = ((ck(vers)[0]?.version) ?? 0) + 1;
+  const snapshot = { calculator: ck(calc), questions: ck(questions), scoring: ck(rules), recommendations: ck(recs) };
+  const ver = ck(await db.from("rr_calculator_versions").insert({ calculator_id: id, version, snapshot, is_published: true }).select("id").single());
+  ck(await db.from("rr_calculator_versions").update({ is_published: false }).eq("calculator_id", id).neq("id", ver.id));
+  ck(await db.from("rr_calculators").update({ status: "published", published_version: version, published_at: new Date().toISOString() }).eq("id", id));
+  console.log("seeded + published", c.key, "v" + version, "questions:", c.questions.length, "max score:", maxScore);
 }
-
-sql.push("commit;");
-writeFileSync("/tmp/seed-rr.sql", sql.join("\n"));
-console.log("written", sql.length, "statements");
