@@ -46,6 +46,14 @@ export const Route = createFileRoute("/rr/$slug")({
 
 type Stage = "landing" | "industry" | "questions" | "capture" | "analyzing" | "report";
 
+const GUIDE_LINES = [
+  "No wrong answers here — a rough estimate is genuinely fine.",
+  "Good. This is the part most businesses have never measured.",
+  "You're doing the hard bit. Only a few more to go.",
+  "This is where the interesting numbers usually appear.",
+  "Almost there. Your report is already taking shape.",
+];
+
 function PublicCalculator() {
   const { config } = Route.useLoaderData() as { config: CalculatorConfig };
   const { slug } = Route.useParams();
@@ -61,6 +69,7 @@ function PublicCalculator() {
   const [submitting, setSubmitting] = useState(false);
   const [resume, setResume] = useState<{ industry: string | null; answers: Answers } | null>(null);
   const [exitPrompt, setExitPrompt] = useState(false);
+  const [flash, setFlash] = useState(false);
   const [startedAt] = useState<number>(() => Date.now());
   const sessionId = useMemo(() => Math.random().toString(36).slice(2), []);
   const reportRef = useRef<ReportPayload | null>(null);
@@ -148,6 +157,15 @@ function PublicCalculator() {
     if (!current) return;
     setError(null);
     setAnswers((a) => ({ ...a, [current.key]: v }));
+    // Choice questions feel best when they move on by themselves.
+    if (current.type === "single_choice" || current.type === "yes_no") {
+      setFlash(true);
+      window.setTimeout(() => {
+        setFlash(false);
+        setCursor((c) => (c + 1 < visible.length ? c + 1 : c));
+        if (cursor + 1 >= visible.length) { track("questions_complete"); setStage("capture"); }
+      }, 420);
+    }
   }
 
   function next() {
