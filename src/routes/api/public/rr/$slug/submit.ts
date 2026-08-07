@@ -100,15 +100,6 @@ export const Route = createFileRoute("/api/public/rr/$slug/submit")({
         }).select("id").single();
         if (subErr) return new Response(subErr.message, { status: 500 });
 
-        if (leadId) {
-          await supabaseAdmin
-            .from("lead_activity")
-            .update({ submission_id: submission.id })
-            .eq("lead_id", leadId)
-            .is("submission_id", null)
-            .eq("calculator_slug", params.slug);
-        }
-
         return Response.json({ submissionId: submission.id, report });
       },
     },
