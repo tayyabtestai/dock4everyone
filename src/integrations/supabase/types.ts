@@ -14,6 +14,85 @@ export type Database = {
   }
   public: {
     Tables: {
+      lead_activity: {
+        Row: {
+          browser: string | null
+          calculator_slug: string | null
+          created_at: string
+          device: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          ip_address: string | null
+          kind: string
+          lead_id: string
+          metadata: Json
+          phone: string | null
+          platform: string | null
+          resource_id: string | null
+          submission_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          browser?: string | null
+          calculator_slug?: string | null
+          created_at?: string
+          device?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          kind?: string
+          lead_id: string
+          metadata?: Json
+          phone?: string | null
+          platform?: string | null
+          resource_id?: string | null
+          submission_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          browser?: string | null
+          calculator_slug?: string | null
+          created_at?: string
+          device?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          kind?: string
+          lead_id?: string
+          metadata?: Json
+          phone?: string | null
+          platform?: string | null
+          resource_id?: string | null
+          submission_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activity_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activity_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activity_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "rr_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           browser: string | null
