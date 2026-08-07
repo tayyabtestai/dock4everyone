@@ -43,9 +43,9 @@ export async function upsertLeadAndLogActivity(
   if (existing) {
     leadId = existing.id;
     // Backfill only missing details; never duplicate the person.
-    const patch: Record<string, string> = {};
-    if (!existing.full_name && name) patch['full_name'] = name;
-    if (!existing.phone && identity.phone) patch['phone'] = identity.phone;
+    const patch: { full_name?: string; phone?: string } = {};
+    if (!existing.full_name && name) patch.full_name = name;
+    if (!existing.phone && identity.phone) patch.phone = identity.phone;
     if (Object.keys(patch).length) {
       await supabaseAdmin.from("leads").update(patch).eq("id", leadId);
     }
