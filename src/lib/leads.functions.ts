@@ -70,18 +70,21 @@ export const captureLeadAndUnlock = createServerFn({ method: "POST" })
     } catch { /* SSR-only helper */ }
     const { browser, device } = parseUA(ua);
 
-    const { error: iErr } = await supabaseAdmin.from("leads").insert({
-      resource_id: resource.id,
-      full_name: data.full_name,
-      email: data.email.toLowerCase(),
-      phone: data.phone || null,
-      platform: data.platform,
-      ip_address: ip,
-      user_agent: ua || null,
-      browser,
-      device,
-    });
-    if (iErr) throw new Error("Could not save your details");
+    const { upsertLeadAndLogActivity } = await import("@/lib/leads.server");
+    await upsertLeadAndLogActivity(
+      {
+        resource_id: resource.id,
+        full_name: data.full_name,
+        email: data.email,
+        phone: data.phone || null,
+        platform: data.platform,
+        ip_address: ip,
+        user_agent: ua || null,
+        browser,
+        device,
+      },
+      { kind: "resource", metadata: { resource_slug: resource.slug, resource_title: resource.title } },
+    );
 
     // Resolve access url
     let access_url = "";

@@ -48,15 +48,39 @@ export const Route = createFileRoute("/api/public/rr/$slug/submit")({
 
         const report = buildReport(config, parsed.data.answers, parsed.data.industry ?? null);
 
-        const { data: leadRow, error: leadErr } = await supabase.from("leads").insert({
-          full_name: parsed.data.contact.name ?? parsed.data.contact.email,
-          email: parsed.data.contact.email,
-          phone: parsed.data.contact.phone ?? null,
-          platform: `rr:${params.slug}`,
-        }).select("id").single();
-        if (leadErr) console.error("[rr submit] lead insert failed", leadErr.message);
+        // Writes go through the service-role client: the public anon client is
+        // read-only for these tables, and lead de-duplication needs a lookup.
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { upsertLeadAndLogActivity } = await import("@/lib/leads.server");
 
-        const { data: submission, error: subErr } = await supabase.from("rr_submissions").insert({
+        let leadId: string | null = null;
+        try {
+          const res = await upsertLeadAndLogActivity(
+            {
+              full_name: parsed.data.contact.name ?? parsed.data.contact.email,
+              email: parsed.data.contact.email,
+              phone: parsed.data.contact.phone ?? null,
+              platform: `rr:${params.slug}`,
+              device: parsed.data.device ?? null,
+            },
+            {
+              kind: "calculator",
+              calculator_slug: params.slug,
+              metadata: {
+                company: parsed.data.contact.company ?? null,
+                website: parsed.data.contact.website ?? null,
+                industry: parsed.data.industry ?? null,
+                score: report.scoreValue,
+                traffic_source: parsed.data.traffic_source ?? null,
+              },
+            },
+          );
+          leadId = res.leadId;
+        } catch (e) {
+          console.error("[rr submit] lead capture failed", e);
+        }
+
+        const { data: submission, error: subErr } = await supabaseAdmin.from("rr_submissions").insert({
           calculator_id: row.calculator_id,
           version_id: row.version_id,
           slug: params.slug,
@@ -67,7 +91,7 @@ export const Route = createFileRoute("/api/public/rr/$slug/submit")({
           financial_impact: report.financialImpact as unknown as any,
           recommendations: report.recommendations as unknown as any,
           contact: parsed.data.contact as unknown as any,
-          lead_id: leadRow?.id ?? null,
+          lead_id: leadId,
           device: parsed.data.device ?? null,
           traffic_source: parsed.data.traffic_source ?? null,
           referrer: parsed.data.referrer ?? null,
