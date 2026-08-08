@@ -2,20 +2,13 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
-  FileText,
   Users,
-  UsersRound,
-  GitBranch,
-  Mail,
-  BarChart3,
-  Settings,
   LogOut,
   ChevronDown,
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
   X,
-  TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -27,56 +20,7 @@ type Item =
 
 const NAV: Item[] = [
   { kind: "leaf", to: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  {
-    kind: "group", key: "resources", label: "Resources", icon: FileText,
-    children: [
-      { to: "/admin/resources", label: "All Resources" },
-      { to: "/admin/resources/new", label: "New Resource" },
-      { to: "/admin/resources/categories", label: "Categories" },
-      { to: "/admin/resources/drafts", label: "Drafts" },
-    ],
-  },
-  {
-    kind: "group", key: "crm", label: "CRM", icon: UsersRound, to: "/admin/crm",
-    children: [
-      { to: "/admin/crm/contacts", label: "Contacts" },
-      { to: "/admin/crm/companies", label: "Companies" },
-      { to: "/admin/crm/activity", label: "Activity" },
-    ],
-  },
-  {
-    kind: "group", key: "leads", label: "Leads", icon: Users,
-    children: [
-      { to: "/admin/leads", label: "All Leads" },
-      { to: "/admin/leads/imported", label: "Imported" },
-      { to: "/admin/leads/sources", label: "Sources" },
-      { to: "/admin/leads/tags", label: "Tags" },
-    ],
-  },
-  { kind: "leaf", to: "/admin/pipeline", label: "Pipeline", icon: GitBranch },
-  {
-    kind: "group", key: "revenue-recovery", label: "Revenue Recovery Platform", icon: TrendingUp, to: "/admin/revenue-recovery",
-    children: [
-      { to: "/admin/revenue-recovery", label: "Overview" },
-      { to: "/admin/revenue-recovery/engine", label: "Revenue Recovery Engine" },
-      { to: "/admin/revenue-recovery/leakage", label: "Revenue Leakage Calculator" },
-      { to: "/admin/revenue-recovery/missed-calls", label: "Missed Calls Calculator" },
-      { to: "/admin/revenue-recovery/lead-conversion", label: "Lead Conversion Audit" },
-      { to: "/admin/revenue-recovery/time-waste", label: "Time Waste Calculator" },
-      { to: "/admin/revenue-recovery/roi", label: "AI ROI Calculator" },
-    ],
-  },
-  {
-    kind: "group", key: "email", label: "Email", icon: Mail, to: "/admin/email",
-    children: [
-      { to: "/admin/email", label: "Overview" },
-      { to: "/admin/email/campaigns", label: "Campaigns" },
-      { to: "/admin/email/templates", label: "Templates" },
-      { to: "/admin/email/sent", label: "Sent" },
-    ],
-  },
-  { kind: "leaf", to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { kind: "leaf", to: "/admin/settings", label: "Settings", icon: Settings },
+  { kind: "leaf", to: "/admin/leads", label: "Leads", icon: Users },
 ];
 
 const COLLAPSE_KEY = "dock.admin.sidebar.collapsed";
