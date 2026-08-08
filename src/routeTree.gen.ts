@@ -17,43 +17,14 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RrSlugRouteImport } from './routes/rr.$slug'
 import { Route as ResourceSlugRouteImport } from './routes/resource.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
-import { Route as AuthenticatedAdminPipelineRouteImport } from './routes/_authenticated/admin.pipeline'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
-import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as AuthenticatedAdminRevenueRecoveryIndexRouteImport } from './routes/_authenticated/admin.revenue-recovery.index'
-import { Route as AuthenticatedAdminResourcesIndexRouteImport } from './routes/_authenticated/admin.resources.index'
-import { Route as AuthenticatedAdminEmailIndexRouteImport } from './routes/_authenticated/admin.email.index'
-import { Route as AuthenticatedAdminCrmIndexRouteImport } from './routes/_authenticated/admin.crm.index'
-import { Route as AuthenticatedAdminRevenueRecoveryEngineRouteImport } from './routes/_authenticated/admin.revenue-recovery.engine'
-import { Route as AuthenticatedAdminRevenueRecoveryKeyRouteImport } from './routes/_authenticated/admin.revenue-recovery.$key'
-import { Route as AuthenticatedAdminResourcesNewRouteImport } from './routes/_authenticated/admin.resources.new'
-import { Route as AuthenticatedAdminResourcesDraftsRouteImport } from './routes/_authenticated/admin.resources.drafts'
-import { Route as AuthenticatedAdminResourcesCategoriesRouteImport } from './routes/_authenticated/admin.resources.categories'
-import { Route as AuthenticatedAdminResourcesIdRouteImport } from './routes/_authenticated/admin.resources.$id'
-import { Route as AuthenticatedAdminLeadsTagsRouteImport } from './routes/_authenticated/admin.leads.tags'
-import { Route as AuthenticatedAdminLeadsSourcesRouteImport } from './routes/_authenticated/admin.leads.sources'
-import { Route as AuthenticatedAdminLeadsImportedRouteImport } from './routes/_authenticated/admin.leads.imported'
-import { Route as AuthenticatedAdminEmailWorkflowsRouteImport } from './routes/_authenticated/admin.email.workflows'
-import { Route as AuthenticatedAdminEmailTemplatesRouteImport } from './routes/_authenticated/admin.email.templates'
-import { Route as AuthenticatedAdminEmailSentRouteImport } from './routes/_authenticated/admin.email.sent'
-import { Route as AuthenticatedAdminEmailScheduledRouteImport } from './routes/_authenticated/admin.email.scheduled'
-import { Route as AuthenticatedAdminEmailCampaignsRouteImport } from './routes/_authenticated/admin.email.campaigns'
-import { Route as AuthenticatedAdminEmailAiWriterRouteImport } from './routes/_authenticated/admin.email.ai-writer'
-import { Route as AuthenticatedAdminCrmContactsRouteImport } from './routes/_authenticated/admin.crm.contacts'
-import { Route as AuthenticatedAdminCrmCompaniesRouteImport } from './routes/_authenticated/admin.crm.companies'
-import { Route as AuthenticatedAdminCrmActivityRouteImport } from './routes/_authenticated/admin.crm.activity'
-import { Route as ApiPublicRrSlugSubmitRouteImport } from './routes/api/public/rr/$slug/submit'
-import { Route as ApiPublicRrSlugEventRouteImport } from './routes/api/public/rr/$slug/event'
-import { Route as ApiPublicRrSlugConfigRouteImport } from './routes/api/public/rr/$slug/config'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -94,11 +65,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RrSlugRoute = RrSlugRouteImport.update({
-  id: '/rr/$slug',
-  path: '/rr/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResourceSlugRoute = ResourceSlugRouteImport.update({
   id: '/resource/$slug',
   path: '/resource/$slug',
@@ -126,29 +92,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminSettingsRoute =
-  AuthenticatedAdminSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPipelineRoute =
-  AuthenticatedAdminPipelineRouteImport.update({
-    id: '/pipeline',
-    path: '/pipeline',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminAnalyticsRoute =
-  AuthenticatedAdminAnalyticsRouteImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -158,153 +106,6 @@ const Char91DotmcpChar93InvokeToolToolRoute =
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAdminRevenueRecoveryIndexRoute =
-  AuthenticatedAdminRevenueRecoveryIndexRouteImport.update({
-    id: '/revenue-recovery/',
-    path: '/revenue-recovery/',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResourcesIndexRoute =
-  AuthenticatedAdminResourcesIndexRouteImport.update({
-    id: '/resources/',
-    path: '/resources/',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailIndexRoute =
-  AuthenticatedAdminEmailIndexRouteImport.update({
-    id: '/email/',
-    path: '/email/',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCrmIndexRoute =
-  AuthenticatedAdminCrmIndexRouteImport.update({
-    id: '/crm/',
-    path: '/crm/',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminRevenueRecoveryEngineRoute =
-  AuthenticatedAdminRevenueRecoveryEngineRouteImport.update({
-    id: '/revenue-recovery/engine',
-    path: '/revenue-recovery/engine',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminRevenueRecoveryKeyRoute =
-  AuthenticatedAdminRevenueRecoveryKeyRouteImport.update({
-    id: '/revenue-recovery/$key',
-    path: '/revenue-recovery/$key',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResourcesNewRoute =
-  AuthenticatedAdminResourcesNewRouteImport.update({
-    id: '/resources/new',
-    path: '/resources/new',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResourcesDraftsRoute =
-  AuthenticatedAdminResourcesDraftsRouteImport.update({
-    id: '/resources/drafts',
-    path: '/resources/drafts',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResourcesCategoriesRoute =
-  AuthenticatedAdminResourcesCategoriesRouteImport.update({
-    id: '/resources/categories',
-    path: '/resources/categories',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminResourcesIdRoute =
-  AuthenticatedAdminResourcesIdRouteImport.update({
-    id: '/resources/$id',
-    path: '/resources/$id',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminLeadsTagsRoute =
-  AuthenticatedAdminLeadsTagsRouteImport.update({
-    id: '/tags',
-    path: '/tags',
-    getParentRoute: () => AuthenticatedAdminLeadsRoute,
-  } as any)
-const AuthenticatedAdminLeadsSourcesRoute =
-  AuthenticatedAdminLeadsSourcesRouteImport.update({
-    id: '/sources',
-    path: '/sources',
-    getParentRoute: () => AuthenticatedAdminLeadsRoute,
-  } as any)
-const AuthenticatedAdminLeadsImportedRoute =
-  AuthenticatedAdminLeadsImportedRouteImport.update({
-    id: '/imported',
-    path: '/imported',
-    getParentRoute: () => AuthenticatedAdminLeadsRoute,
-  } as any)
-const AuthenticatedAdminEmailWorkflowsRoute =
-  AuthenticatedAdminEmailWorkflowsRouteImport.update({
-    id: '/email/workflows',
-    path: '/email/workflows',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailTemplatesRoute =
-  AuthenticatedAdminEmailTemplatesRouteImport.update({
-    id: '/email/templates',
-    path: '/email/templates',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailSentRoute =
-  AuthenticatedAdminEmailSentRouteImport.update({
-    id: '/email/sent',
-    path: '/email/sent',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailScheduledRoute =
-  AuthenticatedAdminEmailScheduledRouteImport.update({
-    id: '/email/scheduled',
-    path: '/email/scheduled',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailCampaignsRoute =
-  AuthenticatedAdminEmailCampaignsRouteImport.update({
-    id: '/email/campaigns',
-    path: '/email/campaigns',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailAiWriterRoute =
-  AuthenticatedAdminEmailAiWriterRouteImport.update({
-    id: '/email/ai-writer',
-    path: '/email/ai-writer',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCrmContactsRoute =
-  AuthenticatedAdminCrmContactsRouteImport.update({
-    id: '/crm/contacts',
-    path: '/crm/contacts',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCrmCompaniesRoute =
-  AuthenticatedAdminCrmCompaniesRouteImport.update({
-    id: '/crm/companies',
-    path: '/crm/companies',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCrmActivityRoute =
-  AuthenticatedAdminCrmActivityRouteImport.update({
-    id: '/crm/activity',
-    path: '/crm/activity',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const ApiPublicRrSlugSubmitRoute = ApiPublicRrSlugSubmitRouteImport.update({
-  id: '/api/public/rr/$slug/submit',
-  path: '/api/public/rr/$slug/submit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicRrSlugEventRoute = ApiPublicRrSlugEventRouteImport.update({
-  id: '/api/public/rr/$slug/event',
-  path: '/api/public/rr/$slug/event',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicRrSlugConfigRoute = ApiPublicRrSlugConfigRouteImport.update({
-  id: '/api/public/rr/$slug/config',
-  path: '/api/public/rr/$slug/config',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -320,39 +121,10 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/resource/$slug': typeof ResourceSlugRoute
-  '/rr/$slug': typeof RrSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/admin/leads': typeof AuthenticatedAdminLeadsRouteWithChildren
-  '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
-  '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
-  '/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
-  '/admin/email/ai-writer': typeof AuthenticatedAdminEmailAiWriterRoute
-  '/admin/email/campaigns': typeof AuthenticatedAdminEmailCampaignsRoute
-  '/admin/email/scheduled': typeof AuthenticatedAdminEmailScheduledRoute
-  '/admin/email/sent': typeof AuthenticatedAdminEmailSentRoute
-  '/admin/email/templates': typeof AuthenticatedAdminEmailTemplatesRoute
-  '/admin/email/workflows': typeof AuthenticatedAdminEmailWorkflowsRoute
-  '/admin/leads/imported': typeof AuthenticatedAdminLeadsImportedRoute
-  '/admin/leads/sources': typeof AuthenticatedAdminLeadsSourcesRoute
-  '/admin/leads/tags': typeof AuthenticatedAdminLeadsTagsRoute
-  '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
-  '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
-  '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
-  '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
-  '/admin/revenue-recovery/$key': typeof AuthenticatedAdminRevenueRecoveryKeyRoute
-  '/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
-  '/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
-  '/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
-  '/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
-  '/admin/revenue-recovery/': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
-  '/api/public/rr/$slug/config': typeof ApiPublicRrSlugConfigRoute
-  '/api/public/rr/$slug/event': typeof ApiPublicRrSlugEventRoute
-  '/api/public/rr/$slug/submit': typeof ApiPublicRrSlugSubmitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -365,39 +137,10 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/resource/$slug': typeof ResourceSlugRoute
-  '/rr/$slug': typeof RrSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/admin/leads': typeof AuthenticatedAdminLeadsRouteWithChildren
-  '/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
-  '/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
-  '/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
-  '/admin/email/ai-writer': typeof AuthenticatedAdminEmailAiWriterRoute
-  '/admin/email/campaigns': typeof AuthenticatedAdminEmailCampaignsRoute
-  '/admin/email/scheduled': typeof AuthenticatedAdminEmailScheduledRoute
-  '/admin/email/sent': typeof AuthenticatedAdminEmailSentRoute
-  '/admin/email/templates': typeof AuthenticatedAdminEmailTemplatesRoute
-  '/admin/email/workflows': typeof AuthenticatedAdminEmailWorkflowsRoute
-  '/admin/leads/imported': typeof AuthenticatedAdminLeadsImportedRoute
-  '/admin/leads/sources': typeof AuthenticatedAdminLeadsSourcesRoute
-  '/admin/leads/tags': typeof AuthenticatedAdminLeadsTagsRoute
-  '/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
-  '/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
-  '/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
-  '/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
-  '/admin/revenue-recovery/$key': typeof AuthenticatedAdminRevenueRecoveryKeyRoute
-  '/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
-  '/admin/crm': typeof AuthenticatedAdminCrmIndexRoute
-  '/admin/email': typeof AuthenticatedAdminEmailIndexRoute
-  '/admin/resources': typeof AuthenticatedAdminResourcesIndexRoute
-  '/admin/revenue-recovery': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
-  '/api/public/rr/$slug/config': typeof ApiPublicRrSlugConfigRoute
-  '/api/public/rr/$slug/event': typeof ApiPublicRrSlugEventRoute
-  '/api/public/rr/$slug/submit': typeof ApiPublicRrSlugSubmitRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -413,39 +156,10 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/resource/$slug': typeof ResourceSlugRoute
-  '/rr/$slug': typeof RrSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRouteWithChildren
-  '/_authenticated/admin/pipeline': typeof AuthenticatedAdminPipelineRoute
-  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/admin/crm/activity': typeof AuthenticatedAdminCrmActivityRoute
-  '/_authenticated/admin/crm/companies': typeof AuthenticatedAdminCrmCompaniesRoute
-  '/_authenticated/admin/crm/contacts': typeof AuthenticatedAdminCrmContactsRoute
-  '/_authenticated/admin/email/ai-writer': typeof AuthenticatedAdminEmailAiWriterRoute
-  '/_authenticated/admin/email/campaigns': typeof AuthenticatedAdminEmailCampaignsRoute
-  '/_authenticated/admin/email/scheduled': typeof AuthenticatedAdminEmailScheduledRoute
-  '/_authenticated/admin/email/sent': typeof AuthenticatedAdminEmailSentRoute
-  '/_authenticated/admin/email/templates': typeof AuthenticatedAdminEmailTemplatesRoute
-  '/_authenticated/admin/email/workflows': typeof AuthenticatedAdminEmailWorkflowsRoute
-  '/_authenticated/admin/leads/imported': typeof AuthenticatedAdminLeadsImportedRoute
-  '/_authenticated/admin/leads/sources': typeof AuthenticatedAdminLeadsSourcesRoute
-  '/_authenticated/admin/leads/tags': typeof AuthenticatedAdminLeadsTagsRoute
-  '/_authenticated/admin/resources/$id': typeof AuthenticatedAdminResourcesIdRoute
-  '/_authenticated/admin/resources/categories': typeof AuthenticatedAdminResourcesCategoriesRoute
-  '/_authenticated/admin/resources/drafts': typeof AuthenticatedAdminResourcesDraftsRoute
-  '/_authenticated/admin/resources/new': typeof AuthenticatedAdminResourcesNewRoute
-  '/_authenticated/admin/revenue-recovery/$key': typeof AuthenticatedAdminRevenueRecoveryKeyRoute
-  '/_authenticated/admin/revenue-recovery/engine': typeof AuthenticatedAdminRevenueRecoveryEngineRoute
-  '/_authenticated/admin/crm/': typeof AuthenticatedAdminCrmIndexRoute
-  '/_authenticated/admin/email/': typeof AuthenticatedAdminEmailIndexRoute
-  '/_authenticated/admin/resources/': typeof AuthenticatedAdminResourcesIndexRoute
-  '/_authenticated/admin/revenue-recovery/': typeof AuthenticatedAdminRevenueRecoveryIndexRoute
-  '/api/public/rr/$slug/config': typeof ApiPublicRrSlugConfigRoute
-  '/api/public/rr/$slug/event': typeof ApiPublicRrSlugEventRoute
-  '/api/public/rr/$slug/submit': typeof ApiPublicRrSlugSubmitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -461,39 +175,10 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/resource/$slug'
-    | '/rr/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/admin/analytics'
     | '/admin/leads'
-    | '/admin/pipeline'
-    | '/admin/settings'
     | '/admin/'
-    | '/admin/crm/activity'
-    | '/admin/crm/companies'
-    | '/admin/crm/contacts'
-    | '/admin/email/ai-writer'
-    | '/admin/email/campaigns'
-    | '/admin/email/scheduled'
-    | '/admin/email/sent'
-    | '/admin/email/templates'
-    | '/admin/email/workflows'
-    | '/admin/leads/imported'
-    | '/admin/leads/sources'
-    | '/admin/leads/tags'
-    | '/admin/resources/$id'
-    | '/admin/resources/categories'
-    | '/admin/resources/drafts'
-    | '/admin/resources/new'
-    | '/admin/revenue-recovery/$key'
-    | '/admin/revenue-recovery/engine'
-    | '/admin/crm/'
-    | '/admin/email/'
-    | '/admin/resources/'
-    | '/admin/revenue-recovery/'
-    | '/api/public/rr/$slug/config'
-    | '/api/public/rr/$slug/event'
-    | '/api/public/rr/$slug/submit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -506,39 +191,10 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/resource/$slug'
-    | '/rr/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/admin/analytics'
     | '/admin/leads'
-    | '/admin/pipeline'
-    | '/admin/settings'
     | '/admin'
-    | '/admin/crm/activity'
-    | '/admin/crm/companies'
-    | '/admin/crm/contacts'
-    | '/admin/email/ai-writer'
-    | '/admin/email/campaigns'
-    | '/admin/email/scheduled'
-    | '/admin/email/sent'
-    | '/admin/email/templates'
-    | '/admin/email/workflows'
-    | '/admin/leads/imported'
-    | '/admin/leads/sources'
-    | '/admin/leads/tags'
-    | '/admin/resources/$id'
-    | '/admin/resources/categories'
-    | '/admin/resources/drafts'
-    | '/admin/resources/new'
-    | '/admin/revenue-recovery/$key'
-    | '/admin/revenue-recovery/engine'
-    | '/admin/crm'
-    | '/admin/email'
-    | '/admin/resources'
-    | '/admin/revenue-recovery'
-    | '/api/public/rr/$slug/config'
-    | '/api/public/rr/$slug/event'
-    | '/api/public/rr/$slug/submit'
   id:
     | '__root__'
     | '/'
@@ -553,39 +209,10 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/resource/$slug'
-    | '/rr/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/leads'
-    | '/_authenticated/admin/pipeline'
-    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
-    | '/_authenticated/admin/crm/activity'
-    | '/_authenticated/admin/crm/companies'
-    | '/_authenticated/admin/crm/contacts'
-    | '/_authenticated/admin/email/ai-writer'
-    | '/_authenticated/admin/email/campaigns'
-    | '/_authenticated/admin/email/scheduled'
-    | '/_authenticated/admin/email/sent'
-    | '/_authenticated/admin/email/templates'
-    | '/_authenticated/admin/email/workflows'
-    | '/_authenticated/admin/leads/imported'
-    | '/_authenticated/admin/leads/sources'
-    | '/_authenticated/admin/leads/tags'
-    | '/_authenticated/admin/resources/$id'
-    | '/_authenticated/admin/resources/categories'
-    | '/_authenticated/admin/resources/drafts'
-    | '/_authenticated/admin/resources/new'
-    | '/_authenticated/admin/revenue-recovery/$key'
-    | '/_authenticated/admin/revenue-recovery/engine'
-    | '/_authenticated/admin/crm/'
-    | '/_authenticated/admin/email/'
-    | '/_authenticated/admin/resources/'
-    | '/_authenticated/admin/revenue-recovery/'
-    | '/api/public/rr/$slug/config'
-    | '/api/public/rr/$slug/event'
-    | '/api/public/rr/$slug/submit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -600,12 +227,8 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ResourceSlugRoute: typeof ResourceSlugRoute
-  RrSlugRoute: typeof RrSlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
-  ApiPublicRrSlugConfigRoute: typeof ApiPublicRrSlugConfigRoute
-  ApiPublicRrSlugEventRoute: typeof ApiPublicRrSlugEventRoute
-  ApiPublicRrSlugSubmitRoute: typeof ApiPublicRrSlugSubmitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -666,13 +289,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rr/$slug': {
-      id: '/rr/$slug'
-      path: '/rr/$slug'
-      fullPath: '/rr/$slug'
-      preLoaderRoute: typeof RrSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/resource/$slug': {
       id: '/resource/$slug'
       path: '/resource/$slug'
@@ -708,32 +324,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/pipeline': {
-      id: '/_authenticated/admin/pipeline'
-      path: '/pipeline'
-      fullPath: '/admin/pipeline'
-      preLoaderRoute: typeof AuthenticatedAdminPipelineRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/leads': {
       id: '/_authenticated/admin/leads'
       path: '/leads'
       fullPath: '/admin/leads'
       preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/analytics': {
-      id: '/_authenticated/admin/analytics'
-      path: '/analytics'
-      fullPath: '/admin/analytics'
-      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/.mcp/invoke-tool/$tool': {
@@ -750,259 +345,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/revenue-recovery/': {
-      id: '/_authenticated/admin/revenue-recovery/'
-      path: '/revenue-recovery'
-      fullPath: '/admin/revenue-recovery/'
-      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resources/': {
-      id: '/_authenticated/admin/resources/'
-      path: '/resources'
-      fullPath: '/admin/resources/'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/': {
-      id: '/_authenticated/admin/email/'
-      path: '/email'
-      fullPath: '/admin/email/'
-      preLoaderRoute: typeof AuthenticatedAdminEmailIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/crm/': {
-      id: '/_authenticated/admin/crm/'
-      path: '/crm'
-      fullPath: '/admin/crm/'
-      preLoaderRoute: typeof AuthenticatedAdminCrmIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/revenue-recovery/engine': {
-      id: '/_authenticated/admin/revenue-recovery/engine'
-      path: '/revenue-recovery/engine'
-      fullPath: '/admin/revenue-recovery/engine'
-      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryEngineRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/revenue-recovery/$key': {
-      id: '/_authenticated/admin/revenue-recovery/$key'
-      path: '/revenue-recovery/$key'
-      fullPath: '/admin/revenue-recovery/$key'
-      preLoaderRoute: typeof AuthenticatedAdminRevenueRecoveryKeyRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resources/new': {
-      id: '/_authenticated/admin/resources/new'
-      path: '/resources/new'
-      fullPath: '/admin/resources/new'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesNewRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resources/drafts': {
-      id: '/_authenticated/admin/resources/drafts'
-      path: '/resources/drafts'
-      fullPath: '/admin/resources/drafts'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesDraftsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resources/categories': {
-      id: '/_authenticated/admin/resources/categories'
-      path: '/resources/categories'
-      fullPath: '/admin/resources/categories'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesCategoriesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/resources/$id': {
-      id: '/_authenticated/admin/resources/$id'
-      path: '/resources/$id'
-      fullPath: '/admin/resources/$id'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/leads/tags': {
-      id: '/_authenticated/admin/leads/tags'
-      path: '/tags'
-      fullPath: '/admin/leads/tags'
-      preLoaderRoute: typeof AuthenticatedAdminLeadsTagsRouteImport
-      parentRoute: typeof AuthenticatedAdminLeadsRoute
-    }
-    '/_authenticated/admin/leads/sources': {
-      id: '/_authenticated/admin/leads/sources'
-      path: '/sources'
-      fullPath: '/admin/leads/sources'
-      preLoaderRoute: typeof AuthenticatedAdminLeadsSourcesRouteImport
-      parentRoute: typeof AuthenticatedAdminLeadsRoute
-    }
-    '/_authenticated/admin/leads/imported': {
-      id: '/_authenticated/admin/leads/imported'
-      path: '/imported'
-      fullPath: '/admin/leads/imported'
-      preLoaderRoute: typeof AuthenticatedAdminLeadsImportedRouteImport
-      parentRoute: typeof AuthenticatedAdminLeadsRoute
-    }
-    '/_authenticated/admin/email/workflows': {
-      id: '/_authenticated/admin/email/workflows'
-      path: '/email/workflows'
-      fullPath: '/admin/email/workflows'
-      preLoaderRoute: typeof AuthenticatedAdminEmailWorkflowsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/templates': {
-      id: '/_authenticated/admin/email/templates'
-      path: '/email/templates'
-      fullPath: '/admin/email/templates'
-      preLoaderRoute: typeof AuthenticatedAdminEmailTemplatesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/sent': {
-      id: '/_authenticated/admin/email/sent'
-      path: '/email/sent'
-      fullPath: '/admin/email/sent'
-      preLoaderRoute: typeof AuthenticatedAdminEmailSentRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/scheduled': {
-      id: '/_authenticated/admin/email/scheduled'
-      path: '/email/scheduled'
-      fullPath: '/admin/email/scheduled'
-      preLoaderRoute: typeof AuthenticatedAdminEmailScheduledRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/campaigns': {
-      id: '/_authenticated/admin/email/campaigns'
-      path: '/email/campaigns'
-      fullPath: '/admin/email/campaigns'
-      preLoaderRoute: typeof AuthenticatedAdminEmailCampaignsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/email/ai-writer': {
-      id: '/_authenticated/admin/email/ai-writer'
-      path: '/email/ai-writer'
-      fullPath: '/admin/email/ai-writer'
-      preLoaderRoute: typeof AuthenticatedAdminEmailAiWriterRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/crm/contacts': {
-      id: '/_authenticated/admin/crm/contacts'
-      path: '/crm/contacts'
-      fullPath: '/admin/crm/contacts'
-      preLoaderRoute: typeof AuthenticatedAdminCrmContactsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/crm/companies': {
-      id: '/_authenticated/admin/crm/companies'
-      path: '/crm/companies'
-      fullPath: '/admin/crm/companies'
-      preLoaderRoute: typeof AuthenticatedAdminCrmCompaniesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/crm/activity': {
-      id: '/_authenticated/admin/crm/activity'
-      path: '/crm/activity'
-      fullPath: '/admin/crm/activity'
-      preLoaderRoute: typeof AuthenticatedAdminCrmActivityRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/api/public/rr/$slug/submit': {
-      id: '/api/public/rr/$slug/submit'
-      path: '/api/public/rr/$slug/submit'
-      fullPath: '/api/public/rr/$slug/submit'
-      preLoaderRoute: typeof ApiPublicRrSlugSubmitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/rr/$slug/event': {
-      id: '/api/public/rr/$slug/event'
-      path: '/api/public/rr/$slug/event'
-      fullPath: '/api/public/rr/$slug/event'
-      preLoaderRoute: typeof ApiPublicRrSlugEventRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/rr/$slug/config': {
-      id: '/api/public/rr/$slug/config'
-      path: '/api/public/rr/$slug/config'
-      fullPath: '/api/public/rr/$slug/config'
-      preLoaderRoute: typeof ApiPublicRrSlugConfigRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
-
-interface AuthenticatedAdminLeadsRouteChildren {
-  AuthenticatedAdminLeadsImportedRoute: typeof AuthenticatedAdminLeadsImportedRoute
-  AuthenticatedAdminLeadsSourcesRoute: typeof AuthenticatedAdminLeadsSourcesRoute
-  AuthenticatedAdminLeadsTagsRoute: typeof AuthenticatedAdminLeadsTagsRoute
-}
-
-const AuthenticatedAdminLeadsRouteChildren: AuthenticatedAdminLeadsRouteChildren =
-  {
-    AuthenticatedAdminLeadsImportedRoute: AuthenticatedAdminLeadsImportedRoute,
-    AuthenticatedAdminLeadsSourcesRoute: AuthenticatedAdminLeadsSourcesRoute,
-    AuthenticatedAdminLeadsTagsRoute: AuthenticatedAdminLeadsTagsRoute,
-  }
-
-const AuthenticatedAdminLeadsRouteWithChildren =
-  AuthenticatedAdminLeadsRoute._addFileChildren(
-    AuthenticatedAdminLeadsRouteChildren,
-  )
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
-  AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRouteWithChildren
-  AuthenticatedAdminPipelineRoute: typeof AuthenticatedAdminPipelineRoute
-  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedAdminCrmActivityRoute: typeof AuthenticatedAdminCrmActivityRoute
-  AuthenticatedAdminCrmCompaniesRoute: typeof AuthenticatedAdminCrmCompaniesRoute
-  AuthenticatedAdminCrmContactsRoute: typeof AuthenticatedAdminCrmContactsRoute
-  AuthenticatedAdminEmailAiWriterRoute: typeof AuthenticatedAdminEmailAiWriterRoute
-  AuthenticatedAdminEmailCampaignsRoute: typeof AuthenticatedAdminEmailCampaignsRoute
-  AuthenticatedAdminEmailScheduledRoute: typeof AuthenticatedAdminEmailScheduledRoute
-  AuthenticatedAdminEmailSentRoute: typeof AuthenticatedAdminEmailSentRoute
-  AuthenticatedAdminEmailTemplatesRoute: typeof AuthenticatedAdminEmailTemplatesRoute
-  AuthenticatedAdminEmailWorkflowsRoute: typeof AuthenticatedAdminEmailWorkflowsRoute
-  AuthenticatedAdminResourcesIdRoute: typeof AuthenticatedAdminResourcesIdRoute
-  AuthenticatedAdminResourcesCategoriesRoute: typeof AuthenticatedAdminResourcesCategoriesRoute
-  AuthenticatedAdminResourcesDraftsRoute: typeof AuthenticatedAdminResourcesDraftsRoute
-  AuthenticatedAdminResourcesNewRoute: typeof AuthenticatedAdminResourcesNewRoute
-  AuthenticatedAdminRevenueRecoveryKeyRoute: typeof AuthenticatedAdminRevenueRecoveryKeyRoute
-  AuthenticatedAdminRevenueRecoveryEngineRoute: typeof AuthenticatedAdminRevenueRecoveryEngineRoute
-  AuthenticatedAdminCrmIndexRoute: typeof AuthenticatedAdminCrmIndexRoute
-  AuthenticatedAdminEmailIndexRoute: typeof AuthenticatedAdminEmailIndexRoute
-  AuthenticatedAdminResourcesIndexRoute: typeof AuthenticatedAdminResourcesIndexRoute
-  AuthenticatedAdminRevenueRecoveryIndexRoute: typeof AuthenticatedAdminRevenueRecoveryIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
-  AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRouteWithChildren,
-  AuthenticatedAdminPipelineRoute: AuthenticatedAdminPipelineRoute,
-  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedAdminCrmActivityRoute: AuthenticatedAdminCrmActivityRoute,
-  AuthenticatedAdminCrmCompaniesRoute: AuthenticatedAdminCrmCompaniesRoute,
-  AuthenticatedAdminCrmContactsRoute: AuthenticatedAdminCrmContactsRoute,
-  AuthenticatedAdminEmailAiWriterRoute: AuthenticatedAdminEmailAiWriterRoute,
-  AuthenticatedAdminEmailCampaignsRoute: AuthenticatedAdminEmailCampaignsRoute,
-  AuthenticatedAdminEmailScheduledRoute: AuthenticatedAdminEmailScheduledRoute,
-  AuthenticatedAdminEmailSentRoute: AuthenticatedAdminEmailSentRoute,
-  AuthenticatedAdminEmailTemplatesRoute: AuthenticatedAdminEmailTemplatesRoute,
-  AuthenticatedAdminEmailWorkflowsRoute: AuthenticatedAdminEmailWorkflowsRoute,
-  AuthenticatedAdminResourcesIdRoute: AuthenticatedAdminResourcesIdRoute,
-  AuthenticatedAdminResourcesCategoriesRoute:
-    AuthenticatedAdminResourcesCategoriesRoute,
-  AuthenticatedAdminResourcesDraftsRoute:
-    AuthenticatedAdminResourcesDraftsRoute,
-  AuthenticatedAdminResourcesNewRoute: AuthenticatedAdminResourcesNewRoute,
-  AuthenticatedAdminRevenueRecoveryKeyRoute:
-    AuthenticatedAdminRevenueRecoveryKeyRoute,
-  AuthenticatedAdminRevenueRecoveryEngineRoute:
-    AuthenticatedAdminRevenueRecoveryEngineRoute,
-  AuthenticatedAdminCrmIndexRoute: AuthenticatedAdminCrmIndexRoute,
-  AuthenticatedAdminEmailIndexRoute: AuthenticatedAdminEmailIndexRoute,
-  AuthenticatedAdminResourcesIndexRoute: AuthenticatedAdminResourcesIndexRoute,
-  AuthenticatedAdminRevenueRecoveryIndexRoute:
-    AuthenticatedAdminRevenueRecoveryIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -1032,12 +385,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ResourceSlugRoute: ResourceSlugRoute,
-  RrSlugRoute: RrSlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
-  ApiPublicRrSlugConfigRoute: ApiPublicRrSlugConfigRoute,
-  ApiPublicRrSlugEventRoute: ApiPublicRrSlugEventRoute,
-  ApiPublicRrSlugSubmitRoute: ApiPublicRrSlugSubmitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
