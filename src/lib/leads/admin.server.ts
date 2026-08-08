@@ -29,8 +29,8 @@ export type LeadRow = {
   funnel_name: string | null;
   funnel_version: string | null;
   funnel_score: number | null;
-  funnel_response_data: unknown;
-  funnel_result: unknown;
+  funnel_response_data: Record<string, unknown> | null;
+  funnel_result: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 };
