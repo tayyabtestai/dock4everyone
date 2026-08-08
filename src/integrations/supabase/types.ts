@@ -93,45 +93,144 @@ export type Database = {
           },
         ]
       }
+      lead_imports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duplicate_count: number
+          failed_count: number
+          file_name: string
+          id: string
+          imported_count: number
+          skipped_count: number
+          total_rows: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duplicate_count?: number
+          failed_count?: number
+          file_name: string
+          id?: string
+          imported_count?: number
+          skipped_count?: number
+          total_rows?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duplicate_count?: number
+          failed_count?: number
+          file_name?: string
+          id?: string
+          imported_count?: number
+          skipped_count?: number
+          total_rows?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           browser: string | null
+          business_name: string | null
+          country: string | null
           created_at: string
           device: string | null
           email: string
+          first_name: string | null
           full_name: string
+          funnel_id: string | null
+          funnel_name: string | null
+          funnel_response_data: Json | null
+          funnel_result: Json | null
+          funnel_score: number | null
+          funnel_version: string | null
           id: string
+          industry: string | null
           ip_address: string | null
+          job_title: string | null
+          last_name: string | null
+          lead_score: number | null
+          location: string | null
+          notes: string | null
           phone: string | null
           platform: string
           resource_id: string | null
+          source: string | null
+          status: string
+          tags: string[]
+          updated_at: string
           user_agent: string | null
+          website: string | null
         }
         Insert: {
           browser?: string | null
+          business_name?: string | null
+          country?: string | null
           created_at?: string
           device?: string | null
           email: string
+          first_name?: string | null
           full_name: string
+          funnel_id?: string | null
+          funnel_name?: string | null
+          funnel_response_data?: Json | null
+          funnel_result?: Json | null
+          funnel_score?: number | null
+          funnel_version?: string | null
           id?: string
+          industry?: string | null
           ip_address?: string | null
-          phone?: string | null
-          platform: string
-          resource_id?: string | null
-          user_agent?: string | null
-        }
-        Update: {
-          browser?: string | null
-          created_at?: string
-          device?: string | null
-          email?: string
-          full_name?: string
-          id?: string
-          ip_address?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          lead_score?: number | null
+          location?: string | null
+          notes?: string | null
           phone?: string | null
           platform?: string
           resource_id?: string | null
+          source?: string | null
+          status?: string
+          tags?: string[]
+          updated_at?: string
           user_agent?: string | null
+          website?: string | null
+        }
+        Update: {
+          browser?: string | null
+          business_name?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          email?: string
+          first_name?: string | null
+          full_name?: string
+          funnel_id?: string | null
+          funnel_name?: string | null
+          funnel_response_data?: Json | null
+          funnel_result?: Json | null
+          funnel_score?: number | null
+          funnel_version?: string | null
+          id?: string
+          industry?: string | null
+          ip_address?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          lead_score?: number | null
+          location?: string | null
+          notes?: string | null
+          phone?: string | null
+          platform?: string
+          resource_id?: string | null
+          source?: string | null
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          user_agent?: string | null
+          website?: string | null
         }
         Relationships: [
           {
