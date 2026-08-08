@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminLeadsIndexRouteImport } from './routes/_authenticated/admin.leads.index'
+import { Route as AuthenticatedAdminLeadsImportRouteImport } from './routes/_authenticated/admin.leads.import'
 import { Route as AuthenticatedAdminLeadsIdRouteImport } from './routes/_authenticated/admin.leads.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -110,6 +111,12 @@ const AuthenticatedAdminLeadsIndexRoute =
     path: '/leads/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminLeadsImportRoute =
+  AuthenticatedAdminLeadsImportRouteImport.update({
+    id: '/leads/import',
+    path: '/leads/import',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminLeadsIdRoute =
   AuthenticatedAdminLeadsIdRouteImport.update({
     id: '/leads/$id',
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
+  '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/admin/leads/': typeof AuthenticatedAdminLeadsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
+  '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsIndexRoute
 }
 export interface FileRoutesById {
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
+  '/_authenticated/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/_authenticated/admin/leads/': typeof AuthenticatedAdminLeadsIndexRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin/'
     | '/admin/leads/$id'
+    | '/admin/leads/import'
     | '/admin/leads/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin'
     | '/admin/leads/$id'
+    | '/admin/leads/import'
     | '/admin/leads'
   id:
     | '__root__'
@@ -226,6 +238,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/leads/$id'
+    | '/_authenticated/admin/leads/import'
     | '/_authenticated/admin/leads/'
   fileRoutesById: FileRoutesById
 }
@@ -359,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminLeadsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/leads/import': {
+      id: '/_authenticated/admin/leads/import'
+      path: '/leads/import'
+      fullPath: '/admin/leads/import'
+      preLoaderRoute: typeof AuthenticatedAdminLeadsImportRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/leads/$id': {
       id: '/_authenticated/admin/leads/$id'
       path: '/leads/$id'
@@ -372,12 +392,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminLeadsIdRoute: typeof AuthenticatedAdminLeadsIdRoute
+  AuthenticatedAdminLeadsImportRoute: typeof AuthenticatedAdminLeadsImportRoute
   AuthenticatedAdminLeadsIndexRoute: typeof AuthenticatedAdminLeadsIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminLeadsIdRoute: AuthenticatedAdminLeadsIdRoute,
+  AuthenticatedAdminLeadsImportRoute: AuthenticatedAdminLeadsImportRoute,
   AuthenticatedAdminLeadsIndexRoute: AuthenticatedAdminLeadsIndexRoute,
 }
 
