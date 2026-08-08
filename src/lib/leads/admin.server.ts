@@ -6,6 +6,8 @@ import type { ImportSummary, LeadWrite } from "./schemas";
 const COLS =
   "id, first_name, last_name, full_name, email, phone, business_name, industry, website, source, platform, status, tags, notes, job_title, location, country, lead_score, funnel_id, funnel_name, funnel_version, funnel_score, funnel_response_data, funnel_result, created_at, updated_at";
 
+export type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
+
 export type LeadRow = {
   id: string;
   first_name: string | null;
@@ -29,8 +31,8 @@ export type LeadRow = {
   funnel_name: string | null;
   funnel_version: string | null;
   funnel_score: number | null;
-  funnel_response_data: Record<string, unknown> | null;
-  funnel_result: Record<string, unknown> | null;
+  funnel_response_data: Json;
+  funnel_result: Json;
   created_at: string;
   updated_at: string;
 };
