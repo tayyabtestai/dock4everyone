@@ -129,7 +129,7 @@ function LeadDetail() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Tags</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {(lead.tags ?? []).length
-                ? (lead.tags ?? []).map((t) => <span key={t} className="rounded-full bg-secondary px-2.5 py-0.5 text-xs">{t}</span>)
+                ? ((lead.tags ?? []) as string[]).map((t: string) => <span key={t} className="rounded-full bg-secondary px-2.5 py-0.5 text-xs">{t}</span>)
                 : <span className="text-sm text-muted-foreground">No tags</span>}
             </div>
           </div>
