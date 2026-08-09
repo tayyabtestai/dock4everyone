@@ -94,8 +94,15 @@ export const ImportSchema = z.object({
 
 export type ImportSummary = {
   imported: number;
+  updated: number;
   skipped: number;
   duplicates: number;
   invalid: number;
   total: number;
 };
+
+export const SavedViewSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  filters: LeadFilterSchema.default({}),
+  columns: z.array(z.string().max(60)).max(60).default([]),
+});
