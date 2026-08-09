@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { LeadFilterSchema } from "./filters";
-import { BulkSchema, ImportSchema, LeadWriteSchema, ListLeadsSchema } from "./schemas";
+import { BulkSchema, ImportSchema, LeadWriteSchema, ListLeadsSchema, SavedViewSchema } from "./schemas";
 
 export const adminListLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -15,11 +15,13 @@ export const adminListLeads = createServerFn({ method: "POST" })
 
 export const adminExportLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => LeadFilterSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ filters: LeadFilterSchema.default({}), ids: z.array(z.string().uuid()).optional() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const m = await import("./admin.server");
     await m.assertAdmin(context.supabase, context.userId);
-    return m.exportRows(context.supabase, data);
+    return m.exportRows(context.supabase, data.filters, data.ids);
   });
 
 export const adminGetLead = createServerFn({ method: "POST" })
@@ -33,10 +35,13 @@ export const adminGetLead = createServerFn({ method: "POST" })
 
 export const adminLeadStats = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d: unknown) =>
+    z.object({ from: z.string().nullable().optional(), to: z.string().nullable().optional() }).default({}).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     const m = await import("./admin.server");
     await m.assertAdmin(context.supabase, context.userId);
-    return m.dashboardStats(context.supabase);
+    return m.dashboardStats(context.supabase, data);
   });
 
 export const adminCreateLead = createServerFn({ method: "POST" })
@@ -46,7 +51,7 @@ export const adminCreateLead = createServerFn({ method: "POST" })
     const m = await import("./admin.server");
     await m.assertAdmin(context.supabase, context.userId);
     const { data: row, error } = await context.supabase
-      .from("leads").insert(m.toRecord(data)).select("id").maybeSingle();
+      .from("leads").insert(m.toRecord(data) as never).select("id").maybeSingle();
     if (error) {
       if (error.code === "23505") throw new Error("A lead with this email already exists.");
       throw new Error(error.message);
@@ -60,7 +65,7 @@ export const adminUpdateLead = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const m = await import("./admin.server");
     await m.assertAdmin(context.supabase, context.userId);
-    const { error } = await context.supabase.from("leads").update(m.toRecord(data.patch)).eq("id", data.id);
+    const { error } = await context.supabase.from("leads").update(m.toRecord(data.patch) as never).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -92,6 +97,43 @@ export const adminImportLeads = createServerFn({ method: "POST" })
     const m = await import("./admin.server");
     await m.assertAdmin(context.supabase, context.userId);
     return m.importLeads(context.supabase, data, context.userId);
+  });
+
+export const adminPreviewImport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ rows: z.array(z.record(z.string(), z.union([z.string(), z.number(), z.null()]))).max(5000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const m = await import("./admin.server");
+    await m.assertAdmin(context.supabase, context.userId);
+    return m.previewImport(context.supabase, data.rows);
+  });
+
+export const adminSavedViews = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const m = await import("./admin.server");
+    await m.assertAdmin(context.supabase, context.userId);
+    return m.listSavedViews(context.supabase);
+  });
+
+export const adminCreateSavedView = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => SavedViewSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const m = await import("./admin.server");
+    await m.assertAdmin(context.supabase, context.userId);
+    return m.createSavedView(context.supabase, data, context.userId);
+  });
+
+export const adminDeleteSavedView = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const m = await import("./admin.server");
+    await m.assertAdmin(context.supabase, context.userId);
+    return m.deleteSavedView(context.supabase, data.id);
   });
 
 export const adminImportHistory = createServerFn({ method: "POST" })

@@ -132,14 +132,67 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_saved_views: {
+        Row: {
+          columns: Json
+          created_at: string
+          created_by: string | null
+          filters: Json
+          id: string
+          name: string
+        }
+        Insert: {
+          columns?: Json
+          created_at?: string
+          created_by?: string | null
+          filters?: Json
+          id?: string
+          name: string
+        }
+        Update: {
+          columns?: Json
+          created_at?: string
+          created_by?: string | null
+          filters?: Json
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           browser: string | null
           business_name: string | null
+          city: string | null
+          company_annual_revenue: string | null
+          company_city: string | null
+          company_country: string | null
+          company_domain: string | null
+          company_facebook: string | null
+          company_founded_year: number | null
+          company_id: string | null
+          company_linkedin: string | null
+          company_linkedin_uid: string | null
+          company_logo: string | null
+          company_phone: string | null
+          company_revenue_clean: number | null
+          company_seo_description: string | null
+          company_short_description: string | null
+          company_state: string | null
+          company_technologies: string | null
+          company_total_funding: string | null
+          company_total_funding_clean: number | null
+          company_twitter: string | null
+          company_website: string | null
           country: string | null
           created_at: string
+          custom_fields: Json
+          department: string | null
           device: string | null
           email: string
+          email_domain: string | null
+          employees_count: number | null
+          facebook_url: string | null
           first_name: string | null
           full_name: string
           funnel_id: string | null
@@ -148,20 +201,30 @@ export type Database = {
           funnel_result: Json | null
           funnel_score: number | null
           funnel_version: string | null
+          headline: string | null
           id: string
           industry: string | null
           ip_address: string | null
           job_title: string | null
+          keywords: string | null
           last_name: string | null
           lead_score: number | null
+          linkedin: string | null
           location: string | null
+          mobile_phone: string | null
           notes: string | null
+          person_id: string | null
+          personal_email: string | null
+          personal_photo: string | null
           phone: string | null
           platform: string
           resource_id: string | null
+          seniority: string | null
           source: string | null
+          state: string | null
           status: string
           tags: string[]
+          twitter_url: string | null
           updated_at: string
           user_agent: string | null
           website: string | null
@@ -169,10 +232,36 @@ export type Database = {
         Insert: {
           browser?: string | null
           business_name?: string | null
+          city?: string | null
+          company_annual_revenue?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_domain?: string | null
+          company_facebook?: string | null
+          company_founded_year?: number | null
+          company_id?: string | null
+          company_linkedin?: string | null
+          company_linkedin_uid?: string | null
+          company_logo?: string | null
+          company_phone?: string | null
+          company_revenue_clean?: number | null
+          company_seo_description?: string | null
+          company_short_description?: string | null
+          company_state?: string | null
+          company_technologies?: string | null
+          company_total_funding?: string | null
+          company_total_funding_clean?: number | null
+          company_twitter?: string | null
+          company_website?: string | null
           country?: string | null
           created_at?: string
+          custom_fields?: Json
+          department?: string | null
           device?: string | null
           email: string
+          email_domain?: string | null
+          employees_count?: number | null
+          facebook_url?: string | null
           first_name?: string | null
           full_name: string
           funnel_id?: string | null
@@ -181,20 +270,30 @@ export type Database = {
           funnel_result?: Json | null
           funnel_score?: number | null
           funnel_version?: string | null
+          headline?: string | null
           id?: string
           industry?: string | null
           ip_address?: string | null
           job_title?: string | null
+          keywords?: string | null
           last_name?: string | null
           lead_score?: number | null
+          linkedin?: string | null
           location?: string | null
+          mobile_phone?: string | null
           notes?: string | null
+          person_id?: string | null
+          personal_email?: string | null
+          personal_photo?: string | null
           phone?: string | null
           platform?: string
           resource_id?: string | null
+          seniority?: string | null
           source?: string | null
+          state?: string | null
           status?: string
           tags?: string[]
+          twitter_url?: string | null
           updated_at?: string
           user_agent?: string | null
           website?: string | null
@@ -202,10 +301,36 @@ export type Database = {
         Update: {
           browser?: string | null
           business_name?: string | null
+          city?: string | null
+          company_annual_revenue?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_domain?: string | null
+          company_facebook?: string | null
+          company_founded_year?: number | null
+          company_id?: string | null
+          company_linkedin?: string | null
+          company_linkedin_uid?: string | null
+          company_logo?: string | null
+          company_phone?: string | null
+          company_revenue_clean?: number | null
+          company_seo_description?: string | null
+          company_short_description?: string | null
+          company_state?: string | null
+          company_technologies?: string | null
+          company_total_funding?: string | null
+          company_total_funding_clean?: number | null
+          company_twitter?: string | null
+          company_website?: string | null
           country?: string | null
           created_at?: string
+          custom_fields?: Json
+          department?: string | null
           device?: string | null
           email?: string
+          email_domain?: string | null
+          employees_count?: number | null
+          facebook_url?: string | null
           first_name?: string | null
           full_name?: string
           funnel_id?: string | null
@@ -214,20 +339,30 @@ export type Database = {
           funnel_result?: Json | null
           funnel_score?: number | null
           funnel_version?: string | null
+          headline?: string | null
           id?: string
           industry?: string | null
           ip_address?: string | null
           job_title?: string | null
+          keywords?: string | null
           last_name?: string | null
           lead_score?: number | null
+          linkedin?: string | null
           location?: string | null
+          mobile_phone?: string | null
           notes?: string | null
+          person_id?: string | null
+          personal_email?: string | null
+          personal_photo?: string | null
           phone?: string | null
           platform?: string
           resource_id?: string | null
+          seniority?: string | null
           source?: string | null
+          state?: string | null
           status?: string
           tags?: string[]
+          twitter_url?: string | null
           updated_at?: string
           user_agent?: string | null
           website?: string | null

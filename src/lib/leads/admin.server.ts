@@ -1,40 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { applyLeadFilters, type LeadFilters } from "./filters";
 import { normaliseWebsite } from "./taxonomy";
+import { NUMERIC_FIELDS, WRITABLE_KEYS } from "./fields";
 import type { ImportSummary, LeadWrite } from "./schemas";
 
-const COLS =
-  "id, first_name, last_name, full_name, email, phone, business_name, industry, website, source, platform, status, tags, notes, job_title, location, country, lead_score, funnel_id, funnel_name, funnel_version, funnel_score, funnel_response_data, funnel_result, created_at, updated_at";
+const COLS = "*";
 
-export type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
-
-export type LeadRow = {
+export type LeadRow = Record<string, any> & {
   id: string;
-  first_name: string | null;
-  last_name: string | null;
   full_name: string;
   email: string;
-  phone: string | null;
-  business_name: string | null;
-  industry: string | null;
-  website: string | null;
-  source: string | null;
-  platform: string | null;
   status: string;
-  tags: string[] | null;
-  notes: string | null;
-  job_title: string | null;
-  location: string | null;
-  country: string | null;
-  lead_score: number | null;
-  funnel_id: string | null;
-  funnel_name: string | null;
-  funnel_version: string | null;
-  funnel_score: number | null;
-  funnel_response_data: Json;
-  funnel_result: Json;
   created_at: string;
-  updated_at: string;
 };
 
 export async function assertAdmin(sb: any, userId: string) {
@@ -48,26 +25,32 @@ function composeName(input: Partial<LeadWrite>): string {
   return (input.full_name?.trim() || joined || input.email || "").trim();
 }
 
-export function toRecord(input: LeadWrite) {
-  return {
-    first_name: input.first_name || null,
-    last_name: input.last_name || null,
-    full_name: composeName(input),
-    email: input.email.trim().toLowerCase(),
-    phone: input.phone || null,
-    business_name: input.business_name || null,
-    industry: input.industry || null,
-    website: normaliseWebsite(input.website),
-    source: input.source || null,
-    platform: input.platform || "Other",
-    status: input.status || "new",
-    tags: input.tags ?? [],
-    notes: input.notes || null,
-    job_title: input.job_title || null,
-    location: input.location || null,
-    country: input.country || null,
-    funnel_name: input.funnel_name || null,
-  };
+function toNumber(v: unknown): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  const n = typeof v === "number" ? v : Number(String(v).replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Maps validated form input onto a leads table record. */
+export function toRecord(input: LeadWrite): Record<string, any> {
+  const rec: Record<string, any> = {};
+  for (const key of WRITABLE_KEYS) {
+    if (!(key in input)) continue;
+    const v = (input as Record<string, any>)[key];
+    if (NUMERIC_FIELDS.has(key)) rec[key] = toNumber(v);
+    else if (key === "tags") rec[key] = Array.isArray(v) ? v : [];
+    else rec[key] = v === "" || v === undefined ? null : v;
+  }
+  rec['email'] = input.email.trim().toLowerCase();
+  rec['full_name'] = composeName(input);
+  rec['website'] = normaliseWebsite(input.website);
+  if (input.company_website !== undefined) rec['company_website'] = normaliseWebsite(input.company_website);
+  rec['status'] = input.status || "new";
+  rec['platform'] = input.platform || "Other";
+  rec['tags'] = input.tags ?? [];
+  if (!rec['email_domain']) rec['email_domain'] = rec['email'].split("@")[1] ?? null;
+  if (input.custom_fields) rec['custom_fields'] = input.custom_fields;
+  return rec;
 }
 
 export async function listLeads(
@@ -83,9 +66,10 @@ export async function listLeads(
   return { rows: (data ?? []) as LeadRow[], total: count ?? 0 };
 }
 
-export async function exportRows(sb: any, filters: LeadFilters): Promise<LeadRow[]> {
+export async function exportRows(sb: any, filters: LeadFilters, ids?: string[]): Promise<LeadRow[]> {
   let q: any = sb.from("leads").select(COLS).order("created_at", { ascending: false }).limit(10000);
-  q = applyLeadFilters(q, filters);
+  if (ids && ids.length) q = q.in("id", ids);
+  else q = applyLeadFilters(q, filters);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   return (data ?? []) as LeadRow[];
@@ -97,55 +81,102 @@ export async function getLead(sb: any, id: string): Promise<LeadRow | null> {
   return (data ?? null) as LeadRow | null;
 }
 
-export async function dashboardStats(sb: any) {
+const DAY = 86400000;
+
+export type DashboardStats = Awaited<ReturnType<typeof dashboardStats>>;
+
+export async function dashboardStats(sb: any, range?: { from?: string | null; to?: string | null }) {
   const { data, error } = await sb
     .from("leads")
-    .select("id, full_name, business_name, industry, email, source, platform, tags, status, created_at")
+    .select("id, full_name, business_name, industry, email, source, platform, status, created_at")
     .order("created_at", { ascending: false })
-    .limit(5000);
+    .limit(20000);
   if (error) throw new Error(error.message);
-  const rows = (data ?? []) as any[];
+  const all = (data ?? []) as any[];
 
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfYesterday = new Date(startOfDay.getTime() - 86400000);
-  const dow = (startOfDay.getDay() + 6) % 7; // Monday-first
-  const startOfWeek = new Date(startOfDay.getTime() - dow * 86400000);
+  const startOfYesterday = new Date(startOfDay.getTime() - DAY);
+  const dow = (startOfDay.getDay() + 6) % 7;
+  const startOfWeek = new Date(startOfDay.getTime() - dow * DAY);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  let today = 0, yesterday = 0, week = 0, month = 0;
-  const byIndustry = new Map<string, number>();
-  const bySource = new Map<string, number>();
-  const byPlatform = new Map<string, number>();
-  const byStatus = new Map<string, number>();
-
-  for (const r of rows) {
+  let today = 0, yesterday = 0, week = 0, month = 0, qualified = 0, converted = 0;
+  for (const r of all) {
     const t = new Date(r.created_at).getTime();
     if (t >= startOfDay.getTime()) today++;
     else if (t >= startOfYesterday.getTime()) yesterday++;
     if (t >= startOfWeek.getTime()) week++;
     if (t >= startOfMonth.getTime()) month++;
-    const inc = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
+    if (["qualified", "converted"].includes(r.status)) qualified++;
+    if (r.status === "converted") converted++;
+  }
+
+  const fromTs = range?.from ? new Date(range.from).getTime() : 0;
+  const toTs = range?.to ? new Date(range.to).getTime() : Number.MAX_SAFE_INTEGER;
+  const scoped = all.filter((r) => {
+    const t = new Date(r.created_at).getTime();
+    return t >= fromTs && t <= toTs;
+  });
+
+  const byIndustry = new Map<string, number>();
+  const bySource = new Map<string, number>();
+  const byPlatform = new Map<string, number>();
+  const byStatus = new Map<string, number>();
+  const inc = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
+  for (const r of scoped) {
     inc(byIndustry, r.industry || "Unspecified");
     inc(bySource, r.source || "Unspecified");
     inc(byPlatform, r.platform || "Unspecified");
     inc(byStatus, r.status || "new");
   }
 
+  // Daily series across the requested window (default: last 14 days).
+  const seriesEnd = range?.to ? new Date(range.to) : now;
+  const seriesStart = range?.from ? new Date(range.from) : new Date(startOfDay.getTime() - 13 * DAY);
+  const startKey = new Date(seriesStart.getFullYear(), seriesStart.getMonth(), seriesStart.getDate()).getTime();
+  const endKey = new Date(seriesEnd.getFullYear(), seriesEnd.getMonth(), seriesEnd.getDate()).getTime();
+  const days = Math.min(180, Math.max(1, Math.round((endKey - startKey) / DAY) + 1));
+  const series: { date: string; leads: number; qualified: number }[] = [];
+  const idx = new Map<string, number>();
+  for (let i = 0; i < days; i++) {
+    const d = new Date(startKey + i * DAY);
+    const key = d.toISOString().slice(0, 10);
+    idx.set(key, series.length);
+    series.push({ date: key, leads: 0, qualified: 0 });
+  }
+  for (const r of all) {
+    const key = new Date(r.created_at).toISOString().slice(0, 10);
+    const i = idx.get(key);
+    if (i === undefined) continue;
+    series[i]!.leads++;
+    if (["qualified", "converted"].includes(r.status)) series[i]!.qualified++;
+  }
+
   const list = (m: Map<string, number>) =>
     [...m.entries()].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
 
+  const industries = list(byIndustry);
+  const sources = list(bySource);
+
   return {
-    total: rows.length,
+    total: all.length,
+    scopedTotal: scoped.length,
     today,
     yesterday,
     week,
     month,
-    byIndustry: list(byIndustry),
-    bySource: list(bySource),
+    qualified,
+    converted,
+    conversionRate: all.length ? Math.round((converted / all.length) * 1000) / 10 : 0,
+    topIndustry: industries[0] ?? null,
+    topSource: sources[0] ?? null,
+    byIndustry: industries,
+    bySource: sources,
     byPlatform: list(byPlatform),
     byStatus: list(byStatus),
-    recent: rows.slice(0, 8),
+    series,
+    recent: all.slice(0, 6),
   };
 }
 
@@ -161,7 +192,7 @@ export async function bulkUpdate(
     const { data, error } = await sb.from("leads").select("id, tags").in("id", input.ids);
     if (error) throw new Error(error.message);
     for (const row of (data ?? []) as { id: string; tags: string[] | null }[]) {
-      let tags = new Set(row.tags ?? []);
+      const tags = new Set(row.tags ?? []);
       for (const t of input.addTags ?? []) tags.add(t);
       for (const t of input.removeTags ?? []) tags.delete(t);
       const { error: uErr } = await sb.from("leads").update({ tags: [...tags] }).eq("id", row.id);
@@ -173,13 +204,81 @@ export async function bulkUpdate(
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Turns a mapped import row into a leads record, collecting "custom:*" keys into custom_fields. */
+function importRowToRecord(raw: Record<string, string | number | null>) {
+  const rec: Record<string, any> = {};
+  const custom: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const value = v === null || v === undefined ? "" : String(v).trim();
+    if (k.startsWith("custom:")) {
+      if (value) custom[k.slice(7)] = value;
+      continue;
+    }
+    if (!WRITABLE_KEYS.includes(k)) continue;
+    if (!value) continue;
+    if (NUMERIC_FIELDS.has(k)) rec[k] = toNumber(value);
+    else rec[k] = value;
+  }
+  const email = String(rec['email'] ?? "").trim().toLowerCase();
+  rec['email'] = email;
+  rec['email_domain'] = rec['email_domain'] ?? (email.split("@")[1] ?? null);
+  rec['website'] = normaliseWebsite(rec['website']);
+  if (rec['company_website']) rec['company_website'] = normaliseWebsite(rec['company_website']);
+  rec['full_name'] =
+    rec['full_name'] || [rec['first_name'], rec['last_name']].filter(Boolean).join(" ") || email;
+  rec['source'] = rec['source'] || "Imported";
+  rec['platform'] = rec['platform'] || "Other";
+  rec['status'] = String(rec['status'] || "new").toLowerCase();
+  const tagsRaw = rec['tags'];
+  const tags = typeof tagsRaw === "string" && tagsRaw.trim()
+    ? tagsRaw.split(/[;,|]/).map((t) => t.trim()).filter(Boolean)
+    : [];
+  if (!tags.includes("Imported")) tags.push("Imported");
+  rec['tags'] = tags;
+  rec['custom_fields'] = custom;
+  return rec;
+}
+
+/** Client-side-safe dry run of an import file — used to build the preview screen. */
+export function analyseImportRows(rows: Record<string, string | number | null>[]) {
+  let invalid = 0;
+  const seen = new Set<string>();
+  let inFileDuplicates = 0;
+  const emails: string[] = [];
+  for (const raw of rows) {
+    const email = String(raw['email'] ?? "").trim().toLowerCase();
+    if (!email || !EMAIL_RE.test(email)) { invalid++; continue; }
+    if (seen.has(email)) { inFileDuplicates++; continue; }
+    seen.add(email);
+    emails.push(email);
+  }
+  return { invalid, inFileDuplicates, emails };
+}
+
+export async function previewImport(sb: any, rows: Record<string, string | number | null>[]) {
+  const { invalid, inFileDuplicates, emails } = analyseImportRows(rows);
+  const existing = new Set<string>();
+  for (let i = 0; i < emails.length; i += 200) {
+    const { data, error } = await sb.from("leads").select("email").in("email", emails.slice(i, i + 200));
+    if (error) throw new Error(error.message);
+    for (const r of (data ?? []) as { email: string }[]) existing.add(r.email.toLowerCase());
+  }
+  const duplicates = emails.filter((e) => existing.has(e)).length + inFileDuplicates;
+  return {
+    total: rows.length,
+    invalid,
+    duplicates,
+    ready: Math.max(0, rows.length - invalid - duplicates),
+  };
+}
+
 export async function importLeads(
   sb: any,
-  input: { file_name: string; rows: Record<string, string | number | null>[] },
+  input: { file_name: string; rows: Record<string, string | number | null>[]; duplicates: "skip" | "update" | "create" },
   userId: string,
 ): Promise<ImportSummary & { id: string | null }> {
   const total = input.rows.length;
-  let invalid = 0, duplicates = 0, imported = 0, skipped = 0;
+  let invalid = 0, duplicates = 0, imported = 0, updated = 0, skipped = 0;
 
   const cleaned: Record<string, any>[] = [];
   const seen = new Set<string>();
@@ -189,47 +288,35 @@ export async function importLeads(
     if (!email || !EMAIL_RE.test(email)) { invalid++; continue; }
     if (seen.has(email)) { duplicates++; continue; }
     seen.add(email);
-    const tagsRaw = raw['tags'];
-    const tags = typeof tagsRaw === "string" && tagsRaw.trim()
-      ? tagsRaw.split(/[;,|]/).map((t) => t.trim()).filter(Boolean)
-      : [];
-    if (!tags.includes("Imported")) tags.push("Imported");
-    const str = (k: string) => {
-      const v = raw[k];
-      return v === null || v === undefined || String(v).trim() === "" ? null : String(v).trim();
-    };
-    cleaned.push({
-      first_name: str("first_name"),
-      last_name: str("last_name"),
-      full_name: str("full_name") || [str("first_name"), str("last_name")].filter(Boolean).join(" ") || email,
-      email,
-      phone: str("phone"),
-      business_name: str("business_name"),
-      industry: str("industry"),
-      website: normaliseWebsite(str("website")),
-      source: str("source") || "Imported",
-      platform: str("platform") || "Other",
-      status: (str("status") || "new").toLowerCase(),
-      job_title: str("job_title"),
-      location: str("location"),
-      country: str("country"),
-      notes: str("notes"),
-      tags,
-    });
+    cleaned.push(importRowToRecord({ ...raw, email }));
   }
 
   if (cleaned.length) {
     const emails = cleaned.map((c) => c['email'] as string);
-    const existing = new Set<string>();
+    const existing = new Map<string, string>();
     for (let i = 0; i < emails.length; i += 200) {
-      const { data, error } = await sb.from("leads").select("email").in("email", emails.slice(i, i + 200));
+      const { data, error } = await sb.from("leads").select("id, email").in("email", emails.slice(i, i + 200));
       if (error) throw new Error(error.message);
-      for (const r of (data ?? []) as { email: string }[]) existing.add(r.email.toLowerCase());
+      for (const r of (data ?? []) as { id: string; email: string }[]) existing.set(r.email.toLowerCase(), r.id);
     }
-    const fresh = cleaned.filter((c) => {
-      if (existing.has(c['email'] as string)) { duplicates++; return false; }
-      return true;
-    });
+
+    const fresh: Record<string, any>[] = [];
+    for (const c of cleaned) {
+      const id = existing.get(c['email'] as string);
+      if (!id) { fresh.push(c); continue; }
+      duplicates++;
+      if (input.duplicates === "update") {
+        const patch = { ...c };
+        delete patch['tags'];
+        const { error } = await sb.from("leads").update(patch).eq("id", id);
+        if (!error) updated++; else skipped++;
+      } else if (input.duplicates === "create") {
+        skipped++; // unique email constraint prevents true duplicates
+      } else {
+        skipped++;
+      }
+    }
+
     for (let i = 0; i < fresh.length; i += 200) {
       const chunk = fresh.slice(i, i + 200);
       const { data, error } = await sb.from("leads").insert(chunk).select("id");
@@ -252,5 +339,34 @@ export async function importLeads(
     .select("id")
     .maybeSingle();
 
-  return { imported, skipped, duplicates, invalid, total, id: rec?.id ?? null };
+  return { imported, updated, skipped, duplicates, invalid, total, id: rec?.id ?? null };
+}
+
+export async function listSavedViews(sb: any) {
+  const { data, error } = await sb
+    .from("lead_saved_views")
+    .select("id, name, filters, columns, created_at")
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as { id: string; name: string; filters: LeadFilters; columns: string[]; created_at: string }[];
+}
+
+export async function createSavedView(
+  sb: any,
+  input: { name: string; filters: LeadFilters; columns: string[] },
+  userId: string,
+) {
+  const { data, error } = await sb
+    .from("lead_saved_views")
+    .insert({ name: input.name, filters: input.filters, columns: input.columns, created_by: userId })
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return { id: data?.id as string };
+}
+
+export async function deleteSavedView(sb: any, id: string) {
+  const { error } = await sb.from("lead_saved_views").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
 }

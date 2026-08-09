@@ -8,6 +8,10 @@ export const LeadFilterSchema = z.object({
   status: z.string().optional(),
   funnel: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
+  minEmployees: z.number().optional(),
+  minScore: z.number().optional(),
   from: z.string().optional(),
   to: z.string().optional(),
 });
@@ -18,7 +22,8 @@ export const EMPTY_FILTERS: LeadFilters = {};
 
 export function hasActiveFilters(f: LeadFilters): boolean {
   return Boolean(
-    f.search || f.industry || f.source || f.platform || f.status || f.funnel || f.from || f.to || (f.tags && f.tags.length),
+    f.search || f.industry || f.source || f.platform || f.status || f.funnel || f.country || f.city ||
+    f.minEmployees || f.minScore || f.from || f.to || (f.tags && f.tags.length),
   );
 }
 
@@ -31,6 +36,10 @@ export function applyLeadFilters<T extends Record<string, unknown>>(query: T, f:
   if (f.platform) q = q.eq("platform", f.platform);
   if (f.status) q = q.eq("status", f.status);
   if (f.funnel) q = q.eq("funnel_name", f.funnel);
+  if (f.country) q = q.ilike("country", f.country);
+  if (f.city) q = q.ilike("city", `%${f.city}%`);
+  if (f.minEmployees) q = q.gte("employees_count", f.minEmployees);
+  if (f.minScore) q = q.gte("lead_score", f.minScore);
   if (f.tags && f.tags.length) q = q.contains("tags", f.tags);
   if (f.from) q = q.gte("created_at", f.from);
   if (f.to) q = q.lte("created_at", f.to);
