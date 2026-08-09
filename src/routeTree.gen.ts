@@ -22,6 +22,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminFunnelsRouteImport } from './routes/_authenticated/admin.funnels'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminLeadsIndexRouteImport } from './routes/_authenticated/admin.leads.index'
@@ -94,6 +95,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminFunnelsRoute =
+  AuthenticatedAdminFunnelsRouteImport.update({
+    id: '/funnels',
+    path: '/funnels',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
@@ -156,6 +164,7 @@ export interface FileRoutesByTo {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
@@ -177,6 +186,7 @@ export interface FileRoutesById {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/_authenticated/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/funnels'
     | '/admin/'
     | '/admin/leads/$id'
     | '/admin/leads/import'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/funnels'
     | '/admin'
     | '/admin/leads/$id'
     | '/admin/leads/import'
@@ -236,6 +248,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/funnels'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/leads/$id'
     | '/_authenticated/admin/leads/import'
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/funnels': {
+      id: '/_authenticated/admin/funnels'
+      path: '/funnels'
+      fullPath: '/admin/funnels'
+      preLoaderRoute: typeof AuthenticatedAdminFunnelsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -390,6 +410,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminFunnelsRoute: typeof AuthenticatedAdminFunnelsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminLeadsIdRoute: typeof AuthenticatedAdminLeadsIdRoute
   AuthenticatedAdminLeadsImportRoute: typeof AuthenticatedAdminLeadsImportRoute
@@ -397,6 +418,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminFunnelsRoute: AuthenticatedAdminFunnelsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminLeadsIdRoute: AuthenticatedAdminLeadsIdRoute,
   AuthenticatedAdminLeadsImportRoute: AuthenticatedAdminLeadsImportRoute,
