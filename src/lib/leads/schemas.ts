@@ -3,11 +3,14 @@ import { LeadFilterSchema } from "./filters";
 
 const txt = (max = 300) => z.string().trim().max(max).optional().nullable();
 const num = () =>
-  z.union([z.number(), z.string()]).optional().nullable().transform((v) => {
-    if (v === null || v === undefined || v === "") return null;
-    const n = typeof v === "number" ? v : Number(String(v).replace(/[^0-9.-]/g, ""));
-    return Number.isFinite(n) ? n : null;
-  });
+  z
+    .union([z.number(), z.string(), z.null()])
+    .transform((v) => {
+      if (v === null || v === "") return null;
+      const n = typeof v === "number" ? v : Number(String(v).replace(/[^0-9.-]/g, ""));
+      return Number.isFinite(n) ? n : null;
+    })
+    .optional();
 
 export const LeadWriteSchema = z.object({
   first_name: txt(80),
