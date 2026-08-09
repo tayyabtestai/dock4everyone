@@ -23,6 +23,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminFunnelsRouteImport } from './routes/_authenticated/admin.funnels'
+import { Route as AuthenticatedAdminEmailRouteImport } from './routes/_authenticated/admin.email'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminLeadsIndexRouteImport } from './routes/_authenticated/admin.leads.index'
@@ -101,6 +102,11 @@ const AuthenticatedAdminFunnelsRoute =
     path: '/funnels',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEmailRoute = AuthenticatedAdminEmailRouteImport.update({
+  id: '/email',
+  path: '/email',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/admin/email': typeof AuthenticatedAdminEmailRoute
   '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/resource/$slug': typeof ResourceSlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
   '/_authenticated/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/email'
     | '/admin/funnels'
     | '/admin/'
     | '/admin/leads/$id'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/admin/email'
     | '/admin/funnels'
     | '/admin'
     | '/admin/leads/$id'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/resource/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/admin/email'
     | '/_authenticated/admin/funnels'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/leads/$id'
@@ -371,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminFunnelsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/email': {
+      id: '/_authenticated/admin/email'
+      path: '/email'
+      fullPath: '/admin/email'
+      preLoaderRoute: typeof AuthenticatedAdminEmailRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -410,6 +429,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminEmailRoute: typeof AuthenticatedAdminEmailRoute
   AuthenticatedAdminFunnelsRoute: typeof AuthenticatedAdminFunnelsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminLeadsIdRoute: typeof AuthenticatedAdminLeadsIdRoute
@@ -418,6 +438,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminEmailRoute: AuthenticatedAdminEmailRoute,
   AuthenticatedAdminFunnelsRoute: AuthenticatedAdminFunnelsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminLeadsIdRoute: AuthenticatedAdminLeadsIdRoute,
