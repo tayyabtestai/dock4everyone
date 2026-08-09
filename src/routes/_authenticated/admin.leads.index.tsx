@@ -86,7 +86,7 @@ function LeadsPage() {
 
   async function doExport(kind: "csv" | "xlsx") {
     try {
-      const data = await exportFn({ data: filters });
+      const data = await exportFn({ data: { filters } });
       if (!data.length) { toast.error("Nothing to export"); return; }
       (kind === "csv" ? exportLeadsCsv : exportLeadsXlsx)(data as unknown as Record<string, unknown>[]);
       toast.success(`Exported ${data.length} lead(s)`);
@@ -186,7 +186,7 @@ function LeadsPage() {
           </button>
           <button
             onClick={async () => {
-              const data = await exportFn({ data: filters });
+              const data = await exportFn({ data: { filters } });
               const subset = (data as unknown as Record<string, unknown>[]).filter((d) => selected.includes(d['id'] as string));
               exportLeadsCsv(subset);
             }}

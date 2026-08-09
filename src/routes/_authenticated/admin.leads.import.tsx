@@ -35,7 +35,7 @@ function ImportPage() {
         for (const [col, field] of Object.entries(mapping)) if (field) o[field] = r[col] ?? "";
         return o;
       });
-      return importFn({ data: { file_name: fileName, rows: mapped } });
+      return importFn({ data: { file_name: fileName, rows: mapped, duplicates: "skip" } });
     },
     onSuccess: (s) => {
       setSummary(s);
