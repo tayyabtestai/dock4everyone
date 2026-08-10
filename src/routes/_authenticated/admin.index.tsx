@@ -4,18 +4,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
+  Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { ArrowUpRight, Users, Sparkles, Target, TrendingUp, Plus, Upload, Download } from "lucide-react";
+import {
+  ArrowUpRight, Users, Sparkles, Filter, Upload, Plus, Download, TrendingUp, TrendingDown, Minus,
+} from "lucide-react";
 import { adminLeadStats, adminExportLeads } from "@/lib/leads/admin.functions";
 import { exportLeadsCsv } from "@/lib/leads/export";
 import { STATUS_LABEL } from "@/lib/leads/taxonomy";
@@ -33,13 +26,13 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 const RANGES = [
-  { key: "7d", label: "7 days", days: 7 },
-  { key: "30d", label: "30 days", days: 30 },
-  { key: "90d", label: "90 days", days: 90 },
-  { key: "all", label: "All time", days: 0 },
+  { key: "7d", label: "7D", days: 7 },
+  { key: "30d", label: "30D", days: 30 },
+  { key: "90d", label: "90D", days: 90 },
+  { key: "all", label: "All", days: 0 },
 ] as const;
 
-const PIE = ["var(--accent)", "#1c1c1b", "#8a8a84", "#c4c0b6", "#6b6b64", "#dcd8cf"];
+const PIE = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "oklch(0.80 0.03 265)"];
 
 function greeting() {
   const h = new Date().getHours();
@@ -80,100 +73,76 @@ function Dashboard() {
   const delta = s ? s.today - s.yesterday : 0;
 
   return (
-    <div className="mx-auto max-w-[1400px] px-5 py-8 md:px-10 md:py-12">
+    <div className="mx-auto max-w-[1440px] px-5 py-8 md:px-10 md:py-12">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <p className="eyebrow mb-3">Command Center</p>
-          <h1 className="font-serif text-4xl leading-[1.05] md:text-5xl">
-            {greeting()}, Tayyab
-          </h1>
+          <h1 className="font-serif text-4xl leading-[1.05] md:text-[42px]">{greeting()}, Tayyab</h1>
           <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-            Here's what's happening inside Dock today — {format(new Date(), "EEEE, MMMM d")}.
+            Here&apos;s what&apos;s happening inside Dock today — {format(new Date(), "EEEE, MMMM d")}.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex rounded-full border border-border bg-white p-1">
+          <div className="flex rounded-full border border-border bg-card p-1">
             {RANGES.map((r) => (
               <button
                 key={r.key}
                 onClick={() => setRange(r.key)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                  range === r.key ? "bg-ink text-primary-foreground" : "text-muted-foreground hover:text-ink"
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                  range === r.key ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-ink"
                 }`}
               >
                 {r.label}
               </button>
             ))}
           </div>
-          <Link to="/admin/leads" search={{ new: true } as never} className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm text-primary-foreground hover:opacity-90">
+          <Link
+            to="/admin/leads"
+            search={{ new: "1" } as never}
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-[0_10px_24px_-14px_var(--accent)] hover:opacity-90"
+          >
             <Plus className="h-3.5 w-3.5" /> Add lead
           </Link>
         </div>
       </header>
 
-      {/* KPI cards */}
       <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi
-          label="Total leads"
-          value={s?.total}
-          loading={q.isLoading}
-          icon={Users}
-          hint={s ? `${s.month} added this month` : undefined}
-        />
-        <Kpi
-          label="New today"
-          value={s?.today}
-          loading={q.isLoading}
-          icon={Sparkles}
-          hint={s ? (delta === 0 ? "Same as yesterday" : `${delta > 0 ? "+" : ""}${delta} vs yesterday`) : undefined}
-          trend={delta}
-        />
-        <Kpi label="Qualified" value={s?.qualified} loading={q.isLoading} icon={Target} hint={s ? `${s.converted} converted` : undefined} />
-        <Kpi
-          label="Conversion rate"
-          value={s ? `${s.conversionRate}%` : undefined}
-          loading={q.isLoading}
-          icon={TrendingUp}
-          hint={s?.total ? "Converted / total leads" : "Not tracked yet"}
-        />
+        <Kpi label="Total leads" value={s?.total} loading={q.isLoading} icon={Users}
+          hint={s ? `${s.month} added this month` : undefined} />
+        <Kpi label="New today" value={s?.today} loading={q.isLoading} icon={Sparkles} trend={delta}
+          hint={s ? (delta === 0 ? "Same as yesterday" : `${delta > 0 ? "+" : ""}${delta} vs yesterday`) : undefined} />
+        <Kpi label="From funnels" value={s?.fromFunnels} loading={q.isLoading} icon={Filter}
+          hint={s?.fromFunnels ? "Captured via funnel pages" : "Not tracked yet"} />
+        <Kpi label="Imported" value={s?.imported} loading={q.isLoading} icon={Upload}
+          hint={s?.imported ? "Added through file imports" : "Nothing imported yet"} />
       </section>
 
-      {/* Activity chart */}
       <section className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Panel className="xl:col-span-2" title="Lead activity" subtitle="Leads captured per day">
-          <div className="h-[280px] w-full px-1 pb-2">
-            {q.isLoading ? (
-              <Skeleton className="h-full" />
-            ) : !s?.series.length ? (
-              <Empty label="Not tracked yet" />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={s.series} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="leadFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.28} />
-                      <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={(v: string) => format(parseISO(v), "MMM d")}
-                    tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-                    axisLine={false}
-                    tickLine={false}
-                    minTickGap={24}
-                  />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} width={40} />
-                  <Tooltip
-                    contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", fontSize: 12 }}
-                    labelFormatter={(v) => format(parseISO(String(v)), "EEEE, MMM d")}
-                  />
-                  <Area type="monotone" dataKey="leads" stroke="var(--accent)" strokeWidth={2} fill="url(#leadFill)" name="Leads" />
-                  <Area type="monotone" dataKey="qualified" stroke="#1c1c1b" strokeWidth={1.5} fillOpacity={0} name="Qualified" />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
+          <div className="h-[300px] w-full px-1 pb-3">
+            {q.isLoading ? <div className="p-5"><Skeleton className="h-[250px]" /></div>
+              : !s?.series.length ? <Empty label="Not tracked yet" />
+              : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={s.series} margin={{ top: 16, right: 12, left: -16, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="leadFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.32} />
+                        <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="date" tickFormatter={(v: string) => format(parseISO(v), "MMM d")}
+                      tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} minTickGap={24} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                      axisLine={false} tickLine={false} width={40} />
+                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", fontSize: 12 }}
+                      labelFormatter={(v) => format(parseISO(String(v)), "EEEE, MMM d")} />
+                    <Area type="monotone" dataKey="leads" stroke="var(--chart-1)" strokeWidth={2.5} fill="url(#leadFill)" name="Leads" />
+                    <Area type="monotone" dataKey="qualified" stroke="var(--chart-2)" strokeWidth={1.5} strokeDasharray="4 4" fillOpacity={0} name="Qualified" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
           </div>
         </Panel>
 
@@ -184,42 +153,30 @@ function Dashboard() {
 
       <section className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Panel title="Leads by industry" subtitle="Top verticals">
-          <Bars data={s?.byIndustry ?? []} loading={q.isLoading} />
+          <Donut data={s?.byIndustry ?? []} loading={q.isLoading} />
         </Panel>
 
         <Panel title="Pipeline status" subtitle="Distribution across stages">
-          <Bars
-            data={(s?.byStatus ?? []).map((r) => ({ label: STATUS_LABEL[r.label] ?? r.label, count: r.count }))}
-            loading={q.isLoading}
-          />
+          <Bars data={(s?.byStatus ?? []).map((r) => ({ label: STATUS_LABEL[r.label] ?? r.label, count: r.count }))} loading={q.isLoading} />
         </Panel>
 
-        <Panel
-          title="Recent leads"
-          subtitle="Latest captures"
-          action={<Link to="/admin/leads" search={{}} className="text-xs text-muted-foreground hover:text-ink">View all</Link>}
-        >
+        <Panel title="Recent leads" subtitle="Latest captures"
+          action={<Link to="/admin/leads" search={{}} className="text-xs font-medium text-accent hover:underline">View all</Link>}>
           {q.isLoading ? (
             <div className="space-y-2 p-5">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-10" />)}</div>
-          ) : !s?.recent.length ? (
-            <Empty label="No leads yet" />
-          ) : (
+          ) : !s?.recent.length ? <Empty label="No leads yet" /> : (
             <ul className="divide-y divide-border">
               {s.recent.map((r) => (
                 <li key={r.id}>
-                  <Link to="/admin/leads/$id" params={{ id: r.id }} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-secondary/40">
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-xs font-semibold">
+                  <Link to="/admin/leads/$id" params={{ id: r.id }} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-secondary/60">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent/10 text-xs font-semibold text-accent">
                       {(r.full_name || r.email || "?").charAt(0).toUpperCase()}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{r.full_name || r.email}</span>
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {r.business_name || r.industry || r.email}
-                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">{r.business_name || r.industry || r.email}</span>
                     </span>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">
-                      {format(new Date(r.created_at), "MMM d")}
-                    </span>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">{format(new Date(r.created_at), "MMM d")}</span>
                   </Link>
                 </li>
               ))}
@@ -228,17 +185,12 @@ function Dashboard() {
         </Panel>
       </section>
 
-      {/* Quick actions */}
       <section className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <QuickAction to="/admin/leads" search={{ new: true }} icon={Plus} title="Add a lead" desc="Capture a contact manually" />
+        <QuickAction to="/admin/leads" search={{ new: "1" }} icon={Plus} title="Add a lead" desc="Capture a contact manually" />
         <QuickAction to="/admin/leads/import" icon={Upload} title="Import leads" desc="Upload CSV or Excel with mapping" />
-        <button
-          onClick={() => void downloadAll()}
-          className="group flex items-start gap-3 rounded-2xl border border-border bg-white p-5 text-left transition-shadow hover:shadow-[0_12px_40px_-28px_rgba(28,28,27,0.5)]"
-        >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/50">
-            <Download className="h-4 w-4" />
-          </span>
+        <button onClick={() => void downloadAll()}
+          className="group flex items-start gap-3 rounded-2xl border border-border bg-card p-5 text-left transition-shadow hover:shadow-[0_18px_44px_-30px_rgba(30,30,60,0.5)]">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent"><Download className="h-4 w-4" /></span>
           <span>
             <span className="flex items-center gap-1 text-sm font-medium">Export all leads <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-60" /></span>
             <span className="mt-0.5 block text-xs text-muted-foreground">Download a complete CSV</span>
@@ -253,14 +205,9 @@ function QuickAction({ to, search, icon: Icon, title, desc }: {
   to: string; search?: Record<string, unknown>; icon: React.ComponentType<{ className?: string }>; title: string; desc: string;
 }) {
   return (
-    <Link
-      to={to as never}
-      search={(search ?? {}) as never}
-      className="group flex items-start gap-3 rounded-2xl border border-border bg-white p-5 transition-shadow hover:shadow-[0_12px_40px_-28px_rgba(28,28,27,0.5)]"
-    >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-secondary/50">
-        <Icon className="h-4 w-4" />
-      </span>
+    <Link to={to as never} search={(search ?? {}) as never}
+      className="group flex items-start gap-3 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-[0_18px_44px_-30px_rgba(30,30,60,0.5)]">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent"><Icon className="h-4 w-4" /></span>
       <span>
         <span className="flex items-center gap-1 text-sm font-medium">{title} <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-60" /></span>
         <span className="mt-0.5 block text-xs text-muted-foreground">{desc}</span>
@@ -273,22 +220,20 @@ function Kpi({ label, value, hint, loading, icon: Icon, trend }: {
   label: string; value?: number | string; hint?: string; loading: boolean;
   icon: React.ComponentType<{ className?: string }>; trend?: number;
 }) {
+  const Trend = trend === undefined ? null : trend > 0 ? TrendingUp : trend < 0 ? TrendingDown : Minus;
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-white p-5 shadow-[0_1px_2px_rgba(28,28,27,0.03)]">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/[0.07] blur-2xl" />
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(30,30,60,0.04)]">
+      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/[0.08] blur-2xl" />
       <div className="relative flex items-start justify-between">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-        <span className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-secondary/40">
-          <Icon className="h-3.5 w-3.5 text-ink/60" />
-        </span>
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent/10 text-accent"><Icon className="h-4 w-4" /></span>
       </div>
-      {loading ? (
-        <Skeleton className="relative mt-4 h-9 w-24" />
-      ) : (
-        <p className="relative mt-3 font-serif text-4xl leading-none">{value ?? "—"}</p>
-      )}
+      {loading ? <Skeleton className="relative mt-4 h-9 w-24" />
+        : <p className="relative mt-3 font-serif text-[40px] leading-none tabular-nums">{value ?? "—"}</p>}
       {hint && !loading && (
-        <p className={`relative mt-2 text-xs ${trend && trend > 0 ? "text-accent" : "text-muted-foreground"}`}>{hint}</p>
+        <p className={`relative mt-2 flex items-center gap-1 text-xs ${trend && trend > 0 ? "text-accent" : "text-muted-foreground"}`}>
+          {Trend && <Trend className="h-3 w-3" />} {hint}
+        </p>
       )}
     </div>
   );
@@ -298,7 +243,7 @@ function Panel({ title, subtitle, action, children, className = "" }: {
   title: string; subtitle?: string; action?: React.ReactNode; children: React.ReactNode; className?: string;
 }) {
   return (
-    <div className={`overflow-hidden rounded-2xl border border-border bg-white ${className}`}>
+    <div className={`overflow-hidden rounded-2xl border border-border bg-card ${className}`}>
       <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <div>
           <h2 className="font-serif text-lg leading-tight">{title}</h2>
@@ -316,7 +261,7 @@ function Bars({ data, loading }: { data: { label: string; count: number }[]; loa
   if (!data.length) return <Empty label="Not tracked yet" />;
   const max = Math.max(...data.map((d) => d.count));
   return (
-    <ul className="space-y-3 p-5">
+    <ul className="space-y-3.5 p-5">
       {data.slice(0, 6).map((d) => (
         <li key={d.label}>
           <div className="flex items-baseline justify-between gap-3 text-sm">
@@ -324,7 +269,7 @@ function Bars({ data, loading }: { data: { label: string; count: number }[]; loa
             <span className="shrink-0 tabular-nums text-muted-foreground">{d.count}</span>
           </div>
           <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary">
-            <div className="h-full rounded-full bg-accent/70" style={{ width: `${Math.max(4, (d.count / max) * 100)}%` }} />
+            <div className="h-full rounded-full bg-accent" style={{ width: `${Math.max(4, (d.count / max) * 100)}%` }} />
           </div>
         </li>
       ))}
@@ -336,24 +281,33 @@ function Donut({ data, loading }: { data: { label: string; count: number }[]; lo
   if (loading) return <div className="p-5"><Skeleton className="h-[220px]" /></div>;
   if (!data.length) return <Empty label="Not tracked yet" />;
   const top = data.slice(0, 6);
+  const total = top.reduce((a, b) => a + b.count, 0) || 1;
   return (
     <div className="p-4">
-      <div className="h-[200px] w-full">
+      <div className="relative h-[200px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={top} dataKey="count" nameKey="label" innerRadius={52} outerRadius={80} paddingAngle={2} stroke="none">
+            <Pie data={top} dataKey="count" nameKey="label" innerRadius={56} outerRadius={82} paddingAngle={2} stroke="none">
               {top.map((_, i) => <Cell key={i} fill={PIE[i % PIE.length]} />)}
             </Pie>
             <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", fontSize: 12 }} />
           </PieChart>
         </ResponsiveContainer>
+        <div className="pointer-events-none absolute inset-0 grid place-items-center">
+          <div className="text-center">
+            <p className="font-serif text-2xl leading-none tabular-nums">{total}</p>
+            <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Leads</p>
+          </div>
+        </div>
       </div>
-      <ul className="mt-2 space-y-1.5 px-1">
+      <ul className="mt-3 space-y-1.5 px-1">
         {top.map((d, i) => (
           <li key={d.label} className="flex items-center gap-2 text-xs">
             <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: PIE[i % PIE.length] }} />
             <span className="truncate">{d.label}</span>
-            <span className="ml-auto tabular-nums text-muted-foreground">{d.count}</span>
+            <span className="ml-auto shrink-0 tabular-nums text-muted-foreground">
+              {d.count} · {Math.round((d.count / total) * 100)}%
+            </span>
           </li>
         ))}
       </ul>
@@ -362,7 +316,7 @@ function Donut({ data, loading }: { data: { label: string; count: number }[]; lo
 }
 
 function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-secondary/70 ${className}`} />;
+  return <div className={`animate-pulse rounded-lg bg-secondary ${className}`} />;
 }
 
 function Empty({ label }: { label: string }) {
