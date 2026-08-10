@@ -88,7 +88,7 @@ export type DashboardStats = Awaited<ReturnType<typeof dashboardStats>>;
 export async function dashboardStats(sb: any, range?: { from?: string | null; to?: string | null }) {
   const { data, error } = await sb
     .from("leads")
-    .select("id, full_name, business_name, industry, email, source, platform, status, created_at")
+    .select("id, full_name, business_name, industry, email, source, platform, status, funnel_name, created_at")
     .order("created_at", { ascending: false })
     .limit(20000);
   if (error) throw new Error(error.message);

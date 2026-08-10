@@ -171,3 +171,36 @@
   &::-webkit-scrollbar { display: none; }
   scrollbar-width: none;
 }
+
+/*
+ * Owner Console theme scope. Applied only on /admin surfaces so public
+ * editorial pages keep the warm paper palette untouched.
+ */
+.console {
+  --canvas: oklch(0.982 0.003 265);          /* cool page wash */
+  --ink: oklch(0.22 0.03 265);               /* midnight slate */
+  --stroke: oklch(0.925 0.006 265);
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--ink);
+  --primary: oklch(0.47 0.19 273);           /* indigo */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.965 0.006 265);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.965 0.006 265);
+  --muted-foreground: oklch(0.55 0.02 265);
+  --accent: oklch(0.47 0.19 273);
+  --accent-foreground: oklch(0.99 0 0);
+  --border: var(--stroke);
+  --input: var(--stroke);
+  --ring: oklch(0.47 0.19 273);
+  --chart-1: oklch(0.47 0.19 273);
+  --chart-2: oklch(0.62 0.16 285);
+  --chart-3: oklch(0.72 0.13 200);
+  --chart-4: oklch(0.70 0.15 40);
+  --chart-5: oklch(0.66 0.14 155);
+
+  background-color: var(--canvas);
+  color: var(--ink);
+}
