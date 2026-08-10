@@ -71,7 +71,7 @@ export function OwnerConsole({ children }: { children: ReactNode }) {
   const initial = (displayName[0] ?? "A").toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-canvas text-ink">
+    <div className="console flex min-h-screen bg-canvas text-ink">
       {/* Mobile top bar */}
       <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-border/60 bg-canvas/90 px-4 py-3 backdrop-blur md:hidden">
         <Link to="/admin" className="font-serif text-xl italic tracking-tight">Dock</Link>
@@ -97,7 +97,7 @@ export function OwnerConsole({ children }: { children: ReactNode }) {
       >
         <div className={`flex items-center gap-3 px-4 py-5 ${collapsed ? "px-3" : "px-5"}`}>
           <Link to="/admin" className="flex min-w-0 items-center gap-3">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ink font-serif text-lg italic text-primary-foreground shadow-[0_6px_18px_-8px_rgba(28,28,27,0.7)]">D</span>
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent font-serif text-lg italic text-accent-foreground shadow-[0_8px_20px_-10px_var(--accent)]">D</span>
             {!collapsed && (
               <span className="flex min-w-0 flex-col leading-tight">
                 <span className="truncate font-serif text-xl italic tracking-tight">Dock</span>
@@ -141,7 +141,7 @@ export function OwnerConsole({ children }: { children: ReactNode }) {
                       <>
                         <span className="truncate">{item.label}</span>
                         {item.soon && (
-                          <span className="ml-auto shrink-0 rounded-full border border-border bg-canvas px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                          <span className="ml-auto shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-accent">
                             Soon
                           </span>
                         )}
@@ -156,7 +156,7 @@ export function OwnerConsole({ children }: { children: ReactNode }) {
 
         <div className="border-t border-border p-3">
           <div className={`flex items-center gap-3 rounded-xl px-2 py-2 ${collapsed ? "justify-center" : ""}`}>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-primary-foreground">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
               {initial}
             </span>
             {!collapsed && (
