@@ -162,6 +162,8 @@ export async function dashboardStats(sb: any, range?: { from?: string | null; to
   return {
     total: all.length,
     scopedTotal: scoped.length,
+    fromFunnels: all.filter((r) => Boolean(r.funnel_name)).length,
+    imported: all.filter((r) => String(r.source ?? "").toLowerCase() === "imported").length,
     today,
     yesterday,
     week,
