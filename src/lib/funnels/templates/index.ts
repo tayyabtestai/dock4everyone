@@ -6,12 +6,20 @@
 import type { FunnelTemplate } from "./builders";
 import { aiAutomationOpportunity } from "./ai-automation-opportunity";
 import { aiAutomationRoiCalculator } from "./ai-automation-roi-calculator";
+import { businessAutomationScorecard } from "./business-automation-scorecard";
+import { aiAgentReadinessAssessment } from "./ai-agent-readiness-assessment";
+import { aiVoiceAgentAssessment } from "./ai-voice-agent-assessment";
+import { aiChatbotRagAssessment } from "./ai-chatbot-rag-assessment";
 
 export type { FunnelTemplate } from "./builders";
 
 export const FUNNEL_TEMPLATES: FunnelTemplate[] = [
   aiAutomationOpportunity,
   aiAutomationRoiCalculator,
+  businessAutomationScorecard,
+  aiAgentReadinessAssessment,
+  aiVoiceAgentAssessment,
+  aiChatbotRagAssessment,
 ];
 
 export const TEMPLATE_BY_KEY: Record<string, FunnelTemplate> = Object.fromEntries(
