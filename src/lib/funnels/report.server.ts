@@ -49,5 +49,15 @@ export async function getReportModel(submissionId: string): Promise<ReportModel 
     (typeof answers.industry === "string" ? (answers.industry as string) : null);
 
   const result = buildResult(snapshot, answers, industry);
-  return buildReport(snapshot, answers, result, sub.contact ?? null);
+  const model = buildReport(snapshot, answers, result, sub.contact ?? null);
+
+  // Recommended Assessments must only surface funnels that are LIVE right now —
+  // drop any recommendation whose funnel was since unpublished or deleted.
+  const { data: pub } = await sb.from("rr_calculators").select("slug").eq("status", "published");
+  const liveSlugs = new Set((pub ?? []).map((r: { slug: string }) => r.slug));
+  model.recommendedFunnels = model.recommendedFunnels.filter(
+    (r) => r.slug && liveSlugs.has(r.slug),
+  );
+
+  return model;
 }
