@@ -27,11 +27,21 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 
+// Public project config baked in as a final fallback so hosted builds connect
+// even when the platform injects no Supabase env vars. These are PUBLIC values —
+// the project URL and the publishable (anon) key, which ships in the browser
+// bundle anyway; access is enforced by Row-Level Security. The SECRET
+// service-role key is never placed here.
+const FALLBACK_SUPABASE_URL = "https://wxommwxeqfapqdrkrzja.supabase.co";
+const FALLBACK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_A2tT4yolfTupImWpVOBncw_p9CmRU9I";
+
 function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
+  // Fall back to process.env for SSR (server-side rendering), then to the
+  // committed public fallback above.
+  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || FALLBACK_SUPABASE_URL;
+  const SUPABASE_PUBLISHABLE_KEY =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || FALLBACK_SUPABASE_PUBLISHABLE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
