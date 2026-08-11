@@ -33,8 +33,11 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
     
-    const SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+    // Pinned to the connected project (must match the browser client) so user
+    // session JWTs validate here. Platform-injected env could point at a
+    // different project, which surfaced as "Unauthorized: Invalid token".
+    const SUPABASE_URL = "https://wxommwxeqfapqdrkrzja.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_A2tT4yolfTupImWpVOBncw_p9CmRU9I";
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
       const missing = [
