@@ -202,13 +202,13 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
   if (q.type === "rating") {
     const cur = typeof value === "number" ? value : 0;
     return (
-      <div className="flex justify-center gap-2.5">
+      <div className="flex justify-center gap-2 sm:gap-2.5">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             type="button"
             key={n}
             onClick={() => onChange(n)}
-            className={`h-14 w-14 rounded-2xl border text-lg font-semibold transition-colors ${n <= cur ? rowOn : rowOff}`}
+            className={`h-12 w-12 rounded-2xl border text-lg font-semibold transition-colors sm:h-14 sm:w-14 ${n <= cur ? rowOn : rowOff}`}
             aria-label={`${n} of 5`}
           >
             {n}

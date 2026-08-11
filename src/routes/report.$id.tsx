@@ -416,7 +416,7 @@ function Overview({ m, onNav }: { m: ReportModel; onNav: (k: SectionKey) => void
         <Card>
           <CardTitle>Your Automation Opportunity Score</CardTitle>
           <ArcGauge score={m.score.value} label={m.score.band} />
-          <div className="mt-5 grid grid-cols-4 gap-2 text-center">
+          <div className="mt-5 grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
             {m.scoreBreakdown.map((d) => (
               <div key={d.label}>
                 <p className="font-serif text-2xl">{d.value}</p>
@@ -446,7 +446,7 @@ function Overview({ m, onNav }: { m: ReportModel; onNav: (k: SectionKey) => void
           <CardTitle>Estimated Financial Impact</CardTitle>
           {m.financial ? (
             <>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex-1 rounded-xl border border-border bg-secondary/30 p-4 text-center">
                   <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     Estimated Monthly Labor Cost
@@ -456,7 +456,7 @@ function Overview({ m, onNav }: { m: ReportModel; onNav: (k: SectionKey) => void
                   </p>
                   <p className="text-xs text-muted-foreground">Current State</p>
                 </div>
-                <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+                <ArrowRight className="mx-auto h-5 w-5 shrink-0 rotate-90 text-muted-foreground sm:rotate-0" />
                 <div className="flex-1 rounded-xl border border-[var(--chart-5)]/30 bg-[var(--chart-5)]/5 p-4 text-center">
                   <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     Estimated Monthly Savings
