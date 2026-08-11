@@ -23,8 +23,9 @@ export const LEAD_FIELDS: FieldDef[] = [
   { key: "seniority", label: "Seniority", group: "contact", aliases: ["seniority", "level"] },
   { key: "department", label: "Department", group: "contact", aliases: ["department", "dept", "function"] },
   { key: "linkedin", label: "LinkedIn", group: "contact", aliases: ["linkedin", "linkedin url", "linkedin profile", "person linkedin"] },
-  { key: "twitter_url", label: "Twitter URL", group: "contact", aliases: ["twitter", "twitter url", "x url"] },
+  { key: "twitter_url", label: "Twitter URL", group: "contact", aliases: ["twitter", "twitter url", "x", "x url"] },
   { key: "facebook_url", label: "Facebook URL", group: "contact", aliases: ["facebook", "facebook url"] },
+  { key: "instagram_url", label: "Instagram URL", group: "contact", aliases: ["instagram", "instagram url", "ig", "ig url", "insta"] },
   { key: "personal_photo", label: "Personal Photo", group: "contact", aliases: ["personal photo", "photo", "avatar", "profile picture"] },
   { key: "person_id", label: "Person ID", group: "contact", aliases: ["person id", "personid", "contact id"] },
 
@@ -33,7 +34,7 @@ export const LEAD_FIELDS: FieldDef[] = [
   { key: "website", label: "Website", group: "company", aliases: ["website", "url", "site", "web"] },
   { key: "company_website", label: "Company Website", group: "company", aliases: ["company website", "company url", "corporate website"] },
   { key: "company_domain", label: "Company Domain", group: "company", aliases: ["company domain", "domain"] },
-  { key: "company_phone", label: "Company Phone", group: "company", aliases: ["company phone", "office phone", "business phone", "hq phone"] },
+  { key: "company_phone", label: "Company Phone", group: "company", aliases: ["company phone", "company phone number", "office phone", "business phone", "hq phone"] },
   { key: "industry", label: "Industry", group: "company", aliases: ["industry", "vertical", "niche", "category", "sector"] },
   { key: "employees_count", label: "Employees Count", group: "company", type: "number", aliases: ["employees", "employees count", "employee count", "headcount", "company size", "num employees"] },
   { key: "company_annual_revenue", label: "Company Annual Revenue", group: "company", aliases: ["annual revenue", "company annual revenue", "revenue"] },
@@ -46,11 +47,12 @@ export const LEAD_FIELDS: FieldDef[] = [
   { key: "company_founded_year", label: "Company Founded Year", group: "company", type: "number", aliases: ["founded", "founded year", "company founded year", "year founded"] },
   { key: "company_linkedin", label: "Company LinkedIn", group: "company", aliases: ["company linkedin", "company linkedin url", "organization linkedin"] },
   { key: "company_linkedin_uid", label: "Company LinkedIn UID", group: "company", aliases: ["company linkedin uid", "linkedin uid", "linkedin company id"] },
-  { key: "company_twitter", label: "Company Twitter", group: "company", aliases: ["company twitter", "company x"] },
-  { key: "company_facebook", label: "Company Facebook", group: "company", aliases: ["company facebook"] },
+  { key: "company_twitter", label: "Company Twitter", group: "company", aliases: ["company twitter", "company x", "company x url", "company twitter url"] },
+  { key: "company_facebook", label: "Company Facebook", group: "company", aliases: ["company facebook", "company facebook url"] },
   { key: "company_logo", label: "Company Logo", group: "company", aliases: ["company logo", "logo"] },
   { key: "company_id", label: "Company ID", group: "company", aliases: ["company id", "companyid", "account id"] },
   { key: "email_domain", label: "Email Domain", group: "company", aliases: ["email domain"] },
+  { key: "email_domain_catchall", label: "Email Domain Catchall", group: "company", aliases: ["email domain catchall", "catchall", "catch all", "domain catchall"] },
   { key: "keywords", label: "Keywords", group: "company", aliases: ["keywords", "tags keywords", "search keywords"] },
 
   // Location
@@ -61,6 +63,9 @@ export const LEAD_FIELDS: FieldDef[] = [
   { key: "company_city", label: "Company City", group: "location", aliases: ["company city", "hq city"] },
   { key: "company_state", label: "Company State", group: "location", aliases: ["company state", "hq state"] },
   { key: "company_country", label: "Company Country", group: "location", aliases: ["company country", "hq country"] },
+  { key: "company_street_address", label: "Company Street Address", group: "location", aliases: ["company street address", "street address", "company street"] },
+  { key: "company_raw_address", label: "Company Raw Address", group: "location", aliases: ["company raw address", "raw address", "company address", "company full address"] },
+  { key: "company_postal_code", label: "Company Postal Code", group: "location", aliases: ["company postal code", "postal code", "zip", "zip code", "postcode", "company zip", "company postcode"] },
 
   // Source
   { key: "source", label: "Source", group: "source", aliases: ["source", "lead source", "acquisition"] },
