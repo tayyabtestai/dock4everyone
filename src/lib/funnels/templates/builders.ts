@@ -184,7 +184,7 @@ export function text(
 }
 
 /** Shared Calendly CTA (the URL is configurable per funnel, defaulting here). */
-export const DEFAULT_CALENDLY = "https://calendly.com/tayyabismail/30min?month=2026-08";
+export const DEFAULT_CALENDLY = "https://calendly.com/tayyabismail/30min";
 
 export function calendlyCta(label = "Book an AI Automation Strategy Call"): Cta {
   return { type: "calendly", label, url: DEFAULT_CALENDLY };
