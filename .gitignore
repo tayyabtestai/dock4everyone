@@ -21,6 +21,9 @@ dist-ssr
 .env.*
 !.env.example
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
