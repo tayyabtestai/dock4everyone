@@ -48,3 +48,11 @@ export const submitFunnel = createServerFn({ method: "POST" })
     const m = await import("./submit.server");
     return m.handleFunnelSubmit(data as Parameters<typeof m.handleFunnelSubmit>[0]);
   });
+
+/** Public: fetch a personalised report by submission id (uuid). */
+export const getReport = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const m = await import("./report.server");
+    return m.getReportModel(data.id);
+  });

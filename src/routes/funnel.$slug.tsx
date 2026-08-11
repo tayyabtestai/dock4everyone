@@ -109,13 +109,13 @@ function Shell({ children, title }: { children: React.ReactNode; title?: string 
 function FunnelPage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(funnelQuery(slug));
-  const funnel = data!;
+  const funnel = data;
   const navigate = useNavigate();
   const runSubmit = useServerFn(submitFunnel);
 
   useEffect(() => {
-    logFunnelEvent(funnel.calculatorId, slug, "viewed");
-  }, [funnel.calculatorId, slug]);
+    if (funnel?.calculatorId) logFunnelEvent(funnel.calculatorId, slug, "viewed");
+  }, [funnel?.calculatorId, slug]);
 
   async function handleSubmit(answers: Answers, contact: Contact): Promise<FunnelResult> {
     const res = await runSubmit({
@@ -129,8 +129,15 @@ function FunnelPage() {
         },
       },
     });
+    // Take the customer to their full personalised report.
+    if (res.submissionId) {
+      navigate({ to: "/report/$id", params: { id: res.submissionId } });
+    }
     return res.result as FunnelResult;
   }
+
+  // Loader throws notFound on null; this guard keeps the component type-safe.
+  if (!funnel) return null;
 
   return (
     <Shell title={funnel.snapshot.name}>
