@@ -27,7 +27,7 @@ type Item = {
 const NAV: Item[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/leads", label: "Leads", icon: Users },
-  { to: "/admin/funnels", label: "Funnels", icon: Filter, soon: true },
+  { to: "/admin/funnels", label: "Funnels", icon: Filter },
   { to: "/admin/email", label: "Email Automation", icon: Mail, soon: true },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3, soon: true },
   { to: "/admin/settings", label: "Settings", icon: Settings, soon: true },
