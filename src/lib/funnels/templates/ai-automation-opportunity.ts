@@ -6,16 +6,18 @@ import {
   opportunityBands,
   opts,
   OTHER,
-  text,
+  yesno,
   type FunnelTemplate,
 } from "./builders";
 
 /**
  * Funnel 1 — AI Automation Opportunity Assessment.
- * Understand the business, find manual processes, score automation potential,
- * qualify the lead, and recommend the next step. Includes industry-dynamic
- * questions (Real Estate / HVAC / E-commerce) driven by the shared engine's
- * conditional logic, not separate funnels.
+ *
+ * Structured as the 7-stage customer journey (Your Business → Generate Your
+ * Report). Industry-dynamic questions (Real Estate / HVAC / E-commerce) are
+ * driven by the shared engine's conditional logic, the Manual Work stage feeds a
+ * live labor-cost estimate, and the AI-maturity + impact/timeline answers drive
+ * scoring and lead qualification.
  */
 
 const INDUSTRY_OPTIONS = opts([
@@ -31,6 +33,14 @@ const INDUSTRY_OPTIONS = opts([
   ["Salon / Beauty", "Salon / Beauty"],
 ]);
 
+// Stage (section) names — these also drive the 7-node stepper order.
+const S1 = "Your Business";
+const S2 = "Your Operations";
+const S3 = "Manual Work";
+const S4 = "Automation Opportunities";
+const S5 = "Quantify the Opportunity";
+const S6 = "Final Details";
+
 export const aiAutomationOpportunity: FunnelTemplate = {
   key: "ai-automation-opportunity",
   slug: "ai-automation-opportunity",
@@ -44,15 +54,23 @@ export const aiAutomationOpportunity: FunnelTemplate = {
   goal: "Qualify Leads",
   settings: {
     goal: "Qualify Leads",
+    stages: {
+      [S1]: { short: "Your Business", subtitle: "Tell us about your business" },
+      [S2]: { short: "Your Operations", subtitle: "Understanding your operations" },
+      [S3]: { short: "Manual Work", subtitle: "Quantify the manual work" },
+      [S4]: { short: "Opportunities", subtitle: "Automation opportunities" },
+      [S5]: { short: "Quantify", subtitle: "AI & automation maturity" },
+      [S6]: { short: "Final Details", subtitle: "Business impact & timeline" },
+    },
     contactGate: {
-      headline: "Your assessment is complete.",
-      subhead: "Unlock your detailed AI Automation Report.",
+      headline: "Unlock your detailed AI Automation Report.",
+      subhead: "Enter your details to reveal your personalized results.",
       optional: ["phone", "company", "website", "job_title"],
     },
     result: {
       scoreLabel: "Automation Opportunity Score",
-      primary: { from: "biggest_bottleneck", label: "Primary Opportunity" },
-      secondary: { from: "automate_most", label: "Where you'd start" },
+      primary: { from: "biggest_impact", label: "Primary Opportunity" },
+      secondary: { from: "automate_what", label: "Where you'd start" },
       recommendedService: {
         map: [
           { min: 0, max: 30, text: "Automation Audit + Quick-Win Workflows" },
@@ -65,11 +83,11 @@ export const aiAutomationOpportunity: FunnelTemplate = {
     cta: calendlyCta(),
   },
   questions: [
-    // Step 1 — Tell us about your business
+    // ── Stage 1 · Your Business ─────────────────────────────
     choice("industry", "What industry are you in?", INDUSTRY_OPTIONS, {
       required: true,
       display: "dropdown",
-      section: "Your business",
+      section: S1,
       allowOther: true,
       help: "We tailor the assessment to your industry.",
     }),
@@ -83,7 +101,7 @@ export const aiAutomationOpportunity: FunnelTemplate = {
         ["201-1000", "201–1,000"],
         ["1000+", "1,000+"],
       ]),
-      { required: true, section: "Your business" },
+      { required: true, section: S1 },
     ),
     choice(
       "business_model",
@@ -93,227 +111,206 @@ export const aiAutomationOpportunity: FunnelTemplate = {
         ["b2c", "B2C"],
         ["b2b2c", "B2B2C"],
         ["marketplace", "Marketplace"],
-        ...([["other", "Other"]] as [string, string][]),
-      ]),
-      { section: "Your business", allowOther: true },
-    ),
-    choice(
-      "current_crm",
-      "Which CRM do you use?",
-      opts([
-        ["hubspot", "HubSpot"],
-        ["salesforce", "Salesforce"],
-        ["pipedrive", "Pipedrive"],
-        ["zoho", "Zoho"],
-        ["spreadsheets", "Spreadsheets / none"],
       ]).concat(OTHER),
-      { section: "Current tools", allowOther: true },
-    ),
-    choice(
-      "automation_tools",
-      "Which automation tools do you already use?",
-      opts([
-        ["zapier", "Zapier"],
-        ["make", "Make"],
-        ["n8n", "n8n"],
-        ["native", "Native app automations"],
-        ["none", "None yet"],
-      ]).concat(OTHER),
-      { type: "multi_choice", section: "Current tools", allowOther: true },
-    ),
-    choice(
-      "ai_tools",
-      "Which AI tools do you already use?",
-      opts([
-        ["chatgpt", "ChatGPT / Claude"],
-        ["copilots", "In-app copilots"],
-        ["custom", "Custom AI"],
-        ["none", "None yet"],
-      ]).concat(OTHER),
-      { type: "multi_choice", section: "Current tools", allowOther: true },
+      { required: true, section: S1, allowOther: true },
     ),
 
-    // Step 2 — Understand your operations (scored)
+    // ── Stage 2 · Your Operations ───────────────────────────
     choice(
-      "manual_processes",
-      "What processes are currently manual?",
+      "manual_time",
+      "Where does your team spend the most manual time?",
       opts([
-        ["lead_qual", "Lead qualification", 6],
-        ["followup", "Follow-up & nurture", 6],
-        ["scheduling", "Appointment scheduling", 5],
-        ["data_entry", "Data entry & CRM updates", 6],
-        ["support", "Customer support", 5],
+        ["support", "Customer support", 6],
+        ["lead_qual", "Lead qualification", 7],
+        ["appointment", "Appointment booking", 6],
+        ["crm", "CRM updates", 5],
+        ["data_entry", "Data entry", 6],
+        ["followups", "Follow-ups", 6],
         ["reporting", "Reporting", 4],
-        ["invoicing", "Invoicing & admin", 4],
+        ["internal", "Internal workflows", 5],
+        ["phone_calls", "Phone calls", 8],
       ]).concat(OTHER),
       {
         type: "multi_choice",
         required: true,
-        section: "Your operations",
+        section: S2,
         allowOther: true,
-        insight: "The more manual processes, the higher the automation upside.",
+        help: "Select all that apply. This helps us identify your biggest automation opportunities.",
       },
     ),
+    // Industry-dynamic branch — one shows based on the chosen industry.
     choice(
-      "repetitive_work",
-      "What repetitive work consumes the most team time?",
+      "ops_real_estate",
+      "Which of these slows your business most?",
       opts([
-        ["answering_calls", "Answering & routing calls", 12],
-        ["answering_questions", "Answering the same questions", 12],
-        ["manual_followup", "Manual follow-ups", 14],
-        ["manual_data", "Copying data between tools", 12],
-        ["qualifying", "Qualifying leads", 14],
-      ]).concat(OTHER),
-      { required: true, section: "Your operations", allowOther: true },
-    ),
-    choice(
-      "biggest_bottleneck",
-      "What's your biggest operational bottleneck?",
-      opts([
-        ["lead_response", "Slow lead response & follow-up", 18],
-        ["call_handling", "Call handling & missed calls", 16],
-        ["support_volume", "Customer support volume", 15],
-        ["manual_ops", "Manual back-office operations", 14],
-        ["scheduling", "Scheduling & no-shows", 13],
-      ]).concat(OTHER),
-      {
-        required: true,
-        section: "Your operations",
-        allowOther: true,
-        insight: "This becomes your primary automation opportunity.",
-      },
-    ),
-
-    // Industry-dynamic question — one shows based on the chosen industry
-    choice(
-      "time_loss_real_estate",
-      "Where do you lose the most time?",
-      opts([
-        ["lead_qual", "Lead qualification", 10],
-        ["followup", "Follow-up", 12],
-        ["scheduling", "Appointment scheduling", 8],
-        ["crm", "CRM updates", 8],
         ["inquiries", "Property inquiries", 10],
-        ["support", "Customer support", 8],
-        ["marketing", "Marketing", 6],
-      ]).concat(OTHER),
-      { industry: "Real Estate", section: "Your operations", allowOther: true },
-    ),
-    choice(
-      "time_loss_hvac",
-      "Where does your team spend the most manual time?",
-      opts([
-        ["answering_calls", "Answering calls", 12],
-        ["booking", "Booking appointments", 10],
         ["lead_qual", "Lead qualification", 10],
-        ["dispatching", "Dispatching technicians", 8],
-        ["followups", "Follow-ups", 8],
-        ["estimates", "Estimates", 8],
-        ["support", "Customer support", 6],
+        ["followup_speed", "Follow-up speed", 12],
+        ["scheduling", "Appointment scheduling", 8],
+        ["crm", "CRM usage", 8],
+        ["drop_off", "Lead drop-off", 12],
       ]).concat(OTHER),
-      { industry: "HVAC", section: "Your operations", allowOther: true },
+      { industry: "Real Estate", section: S2, allowOther: true },
     ),
     choice(
-      "time_loss_ecommerce",
+      "ops_hvac",
+      "Where does your team lose the most time?",
+      opts([
+        ["service_calls", "Monthly service calls", 10],
+        ["missed_calls", "Missed calls", 14],
+        ["booking", "Appointment booking", 10],
+        ["dispatch", "Technician dispatch", 8],
+        ["estimates", "Estimates", 8],
+        ["followups", "Follow-ups", 8],
+        ["after_hours", "After-hours calls", 12],
+      ]).concat(OTHER),
+      { industry: "HVAC", section: S2, allowOther: true },
+    ),
+    choice(
+      "ops_ecommerce",
       "Where does your team spend the most manual time?",
       opts([
-        ["support", "Customer support", 12],
-        ["order_questions", "Order questions", 10],
+        ["orders", "Monthly orders", 8],
+        ["support", "Customer support volume", 12],
+        ["repetitive_q", "Repetitive questions", 12],
         ["returns", "Returns / refunds", 8],
         ["recommendations", "Product recommendations", 8],
         ["lead_recovery", "Lead recovery", 10],
-        ["marketing", "Marketing", 6],
         ["inventory", "Inventory workflows", 6],
       ]).concat(OTHER),
-      { industry: "E-commerce", section: "Your operations", allowOther: true },
+      { industry: "E-commerce", section: S2, allowOther: true },
     ),
 
-    // Step 3 — Quantify (scored)
-    num("employees_involved", "How many employees are involved in that work?", {
-      section: "Team workload",
+    // ── Stage 3 · Manual Work (quantify) ────────────────────
+    num("employees", "How many employees perform this manual work?", {
+      required: true,
+      section: S3,
       validation: { min: 0, max: 100000, unit: "people" },
     }),
+    num("hours_per_week", "How many hours does each spend on it per week?", {
+      required: true,
+      section: S3,
+      validation: { min: 0, max: 168, unit: "hrs" },
+    }),
+    num("hourly_cost", "Approximate fully-loaded hourly cost", {
+      type: "currency",
+      required: true,
+      section: S3,
+      validation: { min: 0, max: 100000, unit: "$" },
+      help: "We use this to estimate your current monthly labor cost.",
+    }),
+
+    // ── Stage 4 · Automation Opportunities ──────────────────
+    choice(
+      "automate_what",
+      "What would you most like to automate?",
+      opts([
+        ["support", "Customer support"],
+        ["lead_qual", "Lead qualification"],
+        ["scheduling", "Appointment scheduling"],
+        ["crm", "CRM updates"],
+        ["followups", "Follow-ups"],
+        ["data_entry", "Data entry"],
+        ["reporting", "Reporting"],
+        ["voice", "Voice calls"],
+        ["internal", "Internal workflows"],
+        ["marketing", "Marketing"],
+      ]).concat(OTHER),
+      { type: "multi_choice", required: true, section: S4, allowOther: true },
+    ),
     choice(
       "frequency",
-      "How frequently does the process happen?",
+      "How often does this work happen?",
       opts([
         ["daily", "Many times a day", 12],
         ["daily_few", "A few times a day", 9],
         ["weekly", "Weekly", 6],
         ["monthly", "Monthly", 3],
       ]),
-      { required: true, section: "Team workload" },
+      { required: true, section: S4 },
     ),
     choice(
       "difficulty",
-      "How difficult is the process to do well?",
+      "How hard is the process to get right?",
       opts([
         ["simple", "Simple & rules-based", 10],
         ["moderate", "Moderate", 7],
         ["complex", "Complex / judgement-heavy", 3],
       ]),
-      {
-        section: "Team workload",
-        insight: "Rules-based work automates fastest.",
-      },
+      { required: true, section: S4, insight: "Rules-based work automates fastest." },
     ),
+    num("impact", "How big would automating this be for the business?", {
+      type: "rating",
+      required: true,
+      section: S4,
+      scoring: { mode: "linear", perUnit: 4, max: 20 },
+      help: "1 = minor, 5 = transformational.",
+    }),
+
+    // ── Stage 5 · Quantify the Opportunity (AI maturity) ────
+    yesno("using_ai", "Are you currently using AI in the business?", [4, 10], {
+      required: true,
+      section: S5,
+      help: "There's more upside when you're just getting started.",
+    }),
     choice(
-      "manual_work_amount",
-      "How much of it is manual, repetitive effort?",
+      "ai_tools",
+      "Which AI / automation tools are you using?",
       opts([
-        ["most", "Most of it", 12],
-        ["half", "About half", 8],
-        ["some", "Some of it", 4],
-      ]),
-      { section: "Team workload" },
-    ),
-    choice(
-      "automate_most",
-      "What would you most like to automate?",
-      opts([
-        ["lead_followup", "Lead qualification & follow-up"],
-        ["calls", "Calls & appointment booking"],
-        ["support", "Customer support"],
-        ["backoffice", "Back-office & data entry"],
-        ["reporting", "Reporting & insights"],
+        ["chatgpt", "ChatGPT"],
+        ["claude", "Claude"],
+        ["n8n", "n8n"],
+        ["make", "Make"],
+        ["zapier", "Zapier"],
+        ["gohighlevel", "GoHighLevel"],
+        ["custom_ai", "Custom AI systems"],
+        ["chatbot", "AI chatbot"],
+        ["voice_ai", "Voice AI"],
+        ["none", "None yet"],
       ]).concat(OTHER),
-      { required: true, section: "Priorities", allowOther: true },
+      { type: "multi_choice", section: S5, allowOther: true },
+    ),
+    choice(
+      "workflow_automation",
+      "How automated are your current workflows?",
+      opts([
+        ["manual", "Mostly manual", 12],
+        ["some", "Some automation", 8],
+        ["mostly", "Mostly automated", 4],
+        ["advanced", "Advanced / AI-assisted", 2],
+      ]),
+      { required: true, section: S5 },
     ),
 
-    // Step 4 — Readiness (scored)
+    // ── Stage 6 · Final Details (impact + qualification) ────
+    choice(
+      "biggest_impact",
+      "What would have the biggest impact?",
+      opts([
+        ["cut_costs", "Reduce operating costs", 16],
+        ["respond_faster", "Respond faster", 15],
+        ["more_leads", "Generate more leads", 16],
+        ["book_more", "Book more appointments", 14],
+        ["reduce_missed", "Reduce missed calls", 14],
+        ["reduce_workload", "Reduce employee workload", 14],
+        ["improve_support", "Improve customer support", 13],
+        ["scale", "Scale without hiring", 16],
+        ["efficiency", "Improve internal efficiency", 13],
+      ]),
+      { required: true, section: S6, insight: "This becomes your primary automation opportunity." },
+    ),
     choice(
       "timeline",
-      "What's your implementation timeline?",
+      "When are you looking to implement?",
       opts([
-        ["now", "As soon as possible", 10],
-        ["quarter", "This quarter", 8],
-        ["half", "Next 6 months", 5],
-        ["exploring", "Just exploring", 2],
+        ["now", "Immediately", 14],
+        ["30d", "Within 30 days", 12],
+        ["1-3m", "1–3 months", 8],
+        ["3-6m", "3–6 months", 5],
+        ["researching", "Just researching", 2],
       ]),
-      { required: true, section: "Readiness" },
+      { required: true, section: S6 },
     ),
-    choice(
-      "automation_experience",
-      "What's your automation experience?",
-      opts([
-        ["none", "None — starting fresh", 8],
-        ["some", "Some workflows in place", 6],
-        ["advanced", "Advanced / already automating", 4],
-      ]),
-      { section: "Readiness" },
-    ),
-    choice(
-      "business_priority",
-      "What's the priority behind this?",
-      opts([
-        ["growth", "Grow revenue"],
-        ["cost", "Cut cost"],
-        ["capacity", "Free up team capacity"],
-        ["cx", "Improve customer experience"],
-      ]),
-      { section: "Readiness" },
-    ),
-    text("anything_else", "Anything else we should know?", { long: true, section: "Readiness" }),
   ],
   scoringRules: [{ industry: null, config: { bands: opportunityBands("Opportunity") } }],
   recommendations: [
@@ -321,18 +318,24 @@ export const aiAutomationOpportunity: FunnelTemplate = {
       "ai-automation-roi-calculator",
       "AI Automation ROI Calculator",
       "You reported significant manual, repetitive workload — quantify the dollar impact next.",
-      [{ when: "manual_work_amount", op: "eq", value: "most" }],
+      {
+        match: "any",
+        rules: [
+          { when: "manual_time", op: "contains", value: "data_entry" },
+          { when: "difficulty", op: "eq", value: "simple" },
+        ],
+      },
       1,
     ),
     funnelRec(
       "ai-voice-agent-assessment",
       "AI Voice Agent Assessment",
-      "You indicated call handling is a bottleneck — see how much of it a voice agent could absorb.",
+      "You indicated calls are a bottleneck — see how much of it a voice agent could absorb.",
       {
         match: "any",
         rules: [
-          { when: "biggest_bottleneck", op: "eq", value: "call_handling" },
-          { when: "repetitive_work", op: "eq", value: "answering_calls" },
+          { when: "manual_time", op: "contains", value: "phone_calls" },
+          { when: "biggest_impact", op: "eq", value: "reduce_missed" },
         ],
       },
       2,
@@ -344,8 +347,8 @@ export const aiAutomationOpportunity: FunnelTemplate = {
       {
         match: "any",
         rules: [
-          { when: "biggest_bottleneck", op: "eq", value: "support_volume" },
-          { when: "repetitive_work", op: "eq", value: "answering_questions" },
+          { when: "manual_time", op: "contains", value: "support" },
+          { when: "biggest_impact", op: "eq", value: "improve_support" },
         ],
       },
       3,

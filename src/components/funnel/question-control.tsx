@@ -1,9 +1,34 @@
 /**
- * Renders a single funnel question's input, for every engine question type.
- * Controlled: the parent owns the answers map. "Other" free-text is stored
- * under `${key}__other`. Shared by the public funnel and the builder preview.
+ * Renders a single funnel question's input for the immersive (dark) customer
+ * experience — every engine question type, large touch targets, clear selected
+ * state. Controlled: the parent owns the answers map. "Other" free-text is
+ * stored under `${key}__other`. Icons are inferred from the option label so the
+ * data model stays schema-light.
  */
-import type { EngineQuestion, JsonValue } from "@/lib/funnels/engine";
+import type { EngineOption, EngineQuestion, JsonValue } from "@/lib/funnels/engine";
+import {
+  Check,
+  Headset,
+  Users,
+  CalendarClock,
+  Database,
+  RefreshCw,
+  Mail,
+  PieChart,
+  Settings2,
+  Phone,
+  ShoppingCart,
+  Undo2,
+  Megaphone,
+  Boxes,
+  Sparkles,
+  Bot,
+  Mic,
+  Wrench,
+  Building2,
+  MoreHorizontal,
+  type LucideIcon,
+} from "lucide-react";
 
 type Props = {
   question: EngineQuestion;
@@ -13,13 +38,44 @@ type Props = {
   onOther: (text: string) => void;
 };
 
-const cardBase =
-  "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40";
-const cardOff = "border-border bg-white hover:border-ink/30";
-const cardOn = "border-accent bg-accent/5 ring-1 ring-accent/30";
+/** Infer a line icon from an option's label/value keywords. */
+function optionIcon(o: EngineOption): LucideIcon {
+  const t = `${o.value} ${o.label}`.toLowerCase();
+  if (o.isOther) return MoreHorizontal;
+  if (/support|help desk|ticket/.test(t)) return Headset;
+  if (/call|phone|dispatch|inbound|outbound|voice/.test(t)) return Phone;
+  if (/appointment|booking|schedul|calendar/.test(t)) return CalendarClock;
+  if (/data entry|data\b/.test(t)) return Database;
+  if (/crm|update/.test(t)) return RefreshCw;
+  if (/follow|email|nurture/.test(t)) return Mail;
+  if (/report|analytic|insight/.test(t)) return PieChart;
+  if (/workflow|internal|process|operations/.test(t)) return Settings2;
+  if (/order|checkout|purchase/.test(t)) return ShoppingCart;
+  if (/return|refund/.test(t)) return Undo2;
+  if (/market|lead recovery|recover/.test(t)) return Megaphone;
+  if (/invent|product|stock/.test(t)) return Boxes;
+  if (/lead|qualif|prospect/.test(t)) return Users;
+  if (/chatbot|rag|knowledge/.test(t)) return Bot;
+  if (/voice/.test(t)) return Mic;
+  if (/estimate|technician|hvac|repair/.test(t)) return Wrench;
+  if (/company|business|property|real estate/.test(t)) return Building2;
+  return Sparkles;
+}
+
+const rowBase =
+  "flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-[15px] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 min-h-[52px]";
+const rowOff = "border-white/10 bg-white/[0.03] text-white/85 hover:bg-white/[0.06]";
+const rowOn = "border-indigo-400/60 bg-indigo-500/15 text-white ring-1 ring-indigo-400/40";
+
+const boxBase = "grid h-5 w-5 shrink-0 place-items-center rounded-md border transition-colors";
+const boxOff = "border-white/25";
+const boxOn = "border-transparent bg-gradient-to-br from-indigo-500 to-violet-500 text-white";
+
+const inputCls =
+  "w-full rounded-xl border border-white/12 bg-white/[0.04] px-4 py-3 text-[15px] text-white placeholder-white/35 outline-none transition-colors focus:border-indigo-400/60";
 
 export function QuestionControl({ question: q, value, otherText, onChange, onOther }: Props) {
-  const showOther = () => {
+  const otherActive = () => {
     if (q.type === "multi_choice") {
       const arr = Array.isArray(value) ? (value as string[]) : [];
       return arr.some((v) => q.options.find((o) => o.value === v)?.isOther);
@@ -27,30 +83,32 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
     return typeof value === "string" && q.options.find((o) => o.value === value)?.isOther;
   };
 
-  const otherField = showOther() ? (
+  const otherField = otherActive() ? (
     <input
       autoFocus
       value={otherText}
       onChange={(e) => onOther(e.target.value)}
       placeholder="Tell us what you need…"
-      className="mt-2 w-full rounded-lg border border-border bg-white px-3 py-2 text-sm outline-none focus:border-ink/40"
+      className={`${inputCls} mt-1`}
       aria-label="Tell us what you need"
     />
   ) : null;
 
-  // Choice (single) — cards or dropdown
+  // Single choice — dropdown or cards
   if (q.type === "single_choice") {
     if (q.display === "dropdown") {
       return (
-        <div>
+        <div className="space-y-2">
           <select
             value={typeof value === "string" ? value : ""}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-ink/40"
+            className={`${inputCls} appearance-none`}
           >
-            <option value="">Select…</option>
+            <option value="" className="bg-[#0d0f16]">
+              Select…
+            </option>
             {q.options.map((o) => (
-              <option key={o.value} value={o.value}>
+              <option key={o.value} value={o.value} className="bg-[#0d0f16]">
                 {o.label}
               </option>
             ))}
@@ -60,27 +118,29 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
       );
     }
     return (
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="space-y-2.5">
         {q.options.map((o) => {
           const on = value === o.value;
+          const Icon = optionIcon(o);
           return (
             <button
               type="button"
               key={o.value}
               onClick={() => onChange(o.value)}
-              className={`${cardBase} ${on ? cardOn : cardOff}`}
+              className={`${rowBase} ${on ? rowOn : rowOff}`}
               aria-pressed={on}
             >
               <span
-                className={`grid h-4 w-4 shrink-0 place-items-center rounded-full border ${on ? "border-accent" : "border-muted-foreground/40"}`}
+                className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${on ? "border-transparent bg-gradient-to-br from-indigo-500 to-violet-500" : "border-white/25"}`}
               >
-                {on ? <span className="h-2 w-2 rounded-full bg-accent" /> : null}
+                {on ? <span className="h-2 w-2 rounded-full bg-white" /> : null}
               </span>
-              {o.label}
+              <Icon className="h-[18px] w-[18px] shrink-0 text-white/55" />
+              <span className="flex-1">{o.label}</span>
             </button>
           );
         })}
-        <div className="sm:col-span-2">{otherField}</div>
+        {otherField}
       </div>
     );
   }
@@ -91,27 +151,27 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
     const toggle = (v: string) =>
       onChange(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
     return (
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="space-y-2.5">
         {q.options.map((o) => {
           const on = arr.includes(o.value);
+          const Icon = optionIcon(o);
           return (
             <button
               type="button"
               key={o.value}
               onClick={() => toggle(o.value)}
-              className={`${cardBase} ${on ? cardOn : cardOff}`}
+              className={`${rowBase} ${on ? rowOn : rowOff}`}
               aria-pressed={on}
             >
-              <span
-                className={`grid h-4 w-4 shrink-0 place-items-center rounded border ${on ? "border-accent bg-accent text-white" : "border-muted-foreground/40"}`}
-              >
-                {on ? "✓" : null}
+              <span className={`${boxBase} ${on ? boxOn : boxOff}`}>
+                {on ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
               </span>
-              {o.label}
+              <Icon className="h-[18px] w-[18px] shrink-0 text-white/55" />
+              <span className="flex-1">{o.label}</span>
             </button>
           );
         })}
-        <div className="sm:col-span-2">{otherField}</div>
+        {otherField}
       </div>
     );
   }
@@ -119,7 +179,7 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
   // Yes / No
   if (q.type === "yes_no") {
     return (
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {q.options.map((o) => {
           const on = value === o.value;
           return (
@@ -127,7 +187,7 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
               type="button"
               key={o.value}
               onClick={() => onChange(o.value)}
-              className={`${cardBase} justify-center ${on ? cardOn : cardOff}`}
+              className={`${rowBase} justify-center ${on ? rowOn : rowOff}`}
               aria-pressed={on}
             >
               {o.label}
@@ -142,13 +202,13 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
   if (q.type === "rating") {
     const cur = typeof value === "number" ? value : 0;
     return (
-      <div className="flex gap-2">
+      <div className="flex justify-center gap-2.5">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             type="button"
             key={n}
             onClick={() => onChange(n)}
-            className={`h-11 w-11 rounded-xl border text-sm font-medium transition ${n <= cur ? cardOn : cardOff}`}
+            className={`h-14 w-14 rounded-2xl border text-lg font-semibold transition-colors ${n <= cur ? rowOn : rowOff}`}
             aria-label={`${n} of 5`}
           >
             {n}
@@ -164,7 +224,7 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
     const max = q.validation?.max ?? 100;
     const cur = typeof value === "number" ? value : min;
     return (
-      <div>
+      <div className="px-1">
         <input
           type="range"
           min={min}
@@ -172,9 +232,9 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
           step={q.validation?.step ?? 1}
           value={cur}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full accent-accent"
+          className="w-full accent-indigo-500"
         />
-        <div className="mt-1 text-sm text-muted-foreground">
+        <div className="mt-2 text-center text-sm text-white/60">
           {cur}
           {q.validation?.unit ? ` ${q.validation.unit}` : ""}
         </div>
@@ -187,9 +247,9 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
     const unit =
       q.validation?.unit ?? (q.type === "currency" ? "$" : q.type === "percentage" ? "%" : "");
     return (
-      <div className="relative">
+      <div className="relative mx-auto max-w-sm">
         {q.type === "currency" ? (
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
             $
           </span>
         ) : null}
@@ -201,10 +261,11 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
           step={q.validation?.step}
           value={typeof value === "number" ? value : typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value === "" ? "" : Number(e.target.value))}
-          className={`w-full rounded-lg border border-border bg-white py-2.5 text-sm outline-none focus:border-ink/40 ${q.type === "currency" ? "pl-7 pr-3" : "px-3"}`}
+          placeholder="0"
+          className={`${inputCls} text-center text-lg ${q.type === "currency" ? "pl-8" : ""}`}
         />
         {unit && q.type !== "currency" ? (
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-white/45">
             {unit}
           </span>
         ) : null}
@@ -220,7 +281,8 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
         value={typeof value === "string" ? value : ""}
         onChange={(e) => onChange(e.target.value)}
         maxLength={q.validation?.maxLength ?? 2000}
-        className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm outline-none focus:border-ink/40"
+        placeholder="Type your answer…"
+        className={inputCls}
       />
     );
   }
@@ -232,7 +294,8 @@ export function QuestionControl({ question: q, value, otherText, onChange, onOth
       value={typeof value === "string" ? value : ""}
       onChange={(e) => onChange(e.target.value)}
       maxLength={q.validation?.maxLength ?? 300}
-      className="w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-ink/40"
+      placeholder="Type your answer…"
+      className={inputCls}
     />
   );
 }

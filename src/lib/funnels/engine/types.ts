@@ -172,6 +172,9 @@ export type ResultConfig = {
   recommendedService?: { text?: string; map?: Array<{ min: number; max: number; text: string }> };
 };
 
+/** Per-stage display metadata, keyed by the question `section` name. */
+export type StageMeta = { short?: string; subtitle?: string };
+
 /** rr_calculators.settings shape the engine understands. */
 export type FunnelSettings = {
   goal?: string;
@@ -179,6 +182,8 @@ export type FunnelSettings = {
   contactGate?: ContactGateConfig;
   result?: ResultConfig;
   cta?: Cta;
+  /** Stepper labels/subtitles per section (customer experience). */
+  stages?: Record<string, StageMeta>;
 };
 
 /**

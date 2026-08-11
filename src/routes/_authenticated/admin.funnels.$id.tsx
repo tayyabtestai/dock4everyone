@@ -643,11 +643,13 @@ function BuilderPreview({ model }: { model: EditFunnel }) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-canvas p-6">
-      <p className="mb-4 text-center text-xs text-muted-foreground">
+    <div className="rounded-2xl border border-border bg-[#05060a] p-4 sm:p-6">
+      <p className="mb-4 text-center text-xs text-white/40">
         Live preview — scoring, logic and results run client-side. No lead is created.
       </p>
-      <PublicRunner snapshot={snapshot} onSubmit={previewSubmit} />
+      <div className="mx-auto max-w-2xl rounded-3xl border border-white/[0.08] bg-[#0b0d14] p-5 sm:p-7">
+        <PublicRunner snapshot={snapshot} onSubmit={previewSubmit} preview />
+      </div>
     </div>
   );
 }
