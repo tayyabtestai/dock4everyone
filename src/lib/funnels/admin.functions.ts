@@ -84,3 +84,32 @@ export const adminDeleteFunnel = createServerFn({ method: "POST" })
     await m.assertAdmin(context.supabase, context.userId);
     return m.deleteFunnel(context.supabase, data.id);
   });
+
+export const adminInstallTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ key: z.string().min(1), publish: z.boolean().default(true) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const [t, a] = await Promise.all([import("./templates.server"), import("./admin.server")]);
+    await a.assertAdmin(context.supabase, context.userId);
+    return t.installTemplate(context.supabase, data.key, { publish: data.publish }, context.userId);
+  });
+
+export const adminInstallAllTemplates = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ publish: z.boolean().default(false) }).parse(d ?? {}))
+  .handler(async ({ data, context }) => {
+    const [t, a] = await Promise.all([import("./templates.server"), import("./admin.server")]);
+    await a.assertAdmin(context.supabase, context.userId);
+    return t.installAllTemplates(context.supabase, { publish: data.publish }, context.userId);
+  });
+
+export const adminPublishFunnel = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const [s, a] = await Promise.all([import("./snapshot.server"), import("./admin.server")]);
+    await a.assertAdmin(context.supabase, context.userId);
+    return s.publishFunnel(context.supabase, data.id, context.userId);
+  });
