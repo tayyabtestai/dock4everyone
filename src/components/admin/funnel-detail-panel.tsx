@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
@@ -11,6 +12,8 @@ import {
   Copy,
   Code2,
   QrCode,
+  Download,
+  ExternalLink,
   Link as LinkIcon,
 } from "lucide-react";
 import { adminGetFunnel } from "@/lib/funnels/admin.functions";
@@ -68,6 +71,10 @@ export function FunnelDetailPanel({
   const tone = FUNNEL_STATUS_TONE[status] ?? FUNNEL_STATUS_TONE.draft;
   const url = f ? publicUrl(f.slug) : "";
   const industry = primaryIndustry(f?.industries);
+  const [qrOpen, setQrOpen] = useState(false);
+  const qrSrc = url
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=${encodeURIComponent(url)}`
+    : "";
 
   return (
     <aside className="flex h-full w-full flex-col overflow-y-auto">
@@ -169,10 +176,63 @@ export function FunnelDetailPanel({
             <ShareButton
               icon={QrCode}
               label="QR Code"
-              onClick={() => toast.info("QR export arrives with the public funnel (Phase 2c).")}
+              onClick={() =>
+                status === "published"
+                  ? setQrOpen(true)
+                  : toast.info("Publish this funnel to generate its QR code.")
+              }
             />
           </div>
         </section>
+
+        {qrOpen && qrSrc && (
+          <div
+            className="console fixed inset-0 z-[70] grid place-items-center bg-ink/40 p-4 backdrop-blur-sm"
+            onClick={() => setQrOpen(false)}
+          >
+            <div
+              className="w-full max-w-xs rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="font-serif text-lg">Scan to open</h3>
+                <button
+                  onClick={() => setQrOpen(false)}
+                  className="grid h-7 w-7 place-items-center rounded-full hover:bg-secondary"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mx-auto grid place-items-center rounded-xl bg-white p-3">
+                <img
+                  src={qrSrc}
+                  width={220}
+                  height={220}
+                  alt={`QR code for ${f?.name ?? "funnel"}`}
+                />
+              </div>
+              <p className="mt-3 truncate text-[11px] text-muted-foreground">{url}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <a
+                  href={qrSrc}
+                  download={`${f?.slug ?? "funnel"}-qr.png`}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-2 text-xs hover:bg-secondary"
+                >
+                  <Download className="h-3.5 w-3.5" /> Download
+                </a>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-2 text-xs hover:bg-secondary"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" /> Open
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Recent submissions */}
         <section>
