@@ -40,22 +40,35 @@ export async function assembleSnapshot(sb: any, calcId: string): Promise<FunnelS
   if (qRes.error) throw new Error(qRes.error.message);
 
   const calc = calcRes.data;
-  const questions: EngineQuestion[] = ((qRes.data ?? []) as any[]).map((q) => ({
-    id: q.id,
-    key: q.key,
-    type: q.type,
-    label: q.label ?? "",
-    help: q.help || undefined,
-    insight: q.insight || undefined,
-    section: q.section || undefined,
-    required: !!q.required,
-    industry: q.industry ?? null,
-    options: Array.isArray(q.options) ? q.options : [],
-    conditions: q.conditions ?? [],
-    weight: Number(q.weight ?? 0),
-    scoring: q.scoring && Object.keys(q.scoring).length ? q.scoring : { mode: "none" },
-    validation: q.validation && Object.keys(q.validation).length ? q.validation : undefined,
-  }));
+  const questions: EngineQuestion[] = ((qRes.data ?? []) as any[]).map((q) => {
+    // Restore the `display` UI hint stashed inside validation on install.
+    const rawVal =
+      q.validation && Object.keys(q.validation).length ? { ...q.validation } : undefined;
+    let display: "cards" | "dropdown" | undefined;
+    let validation = rawVal;
+    if (rawVal && typeof rawVal.display === "string") {
+      display = rawVal.display;
+      delete rawVal.display;
+      validation = Object.keys(rawVal).length ? rawVal : undefined;
+    }
+    return {
+      id: q.id,
+      key: q.key,
+      type: q.type,
+      label: q.label ?? "",
+      help: q.help || undefined,
+      insight: q.insight || undefined,
+      section: q.section || undefined,
+      required: !!q.required,
+      industry: q.industry ?? null,
+      options: Array.isArray(q.options) ? q.options : [],
+      conditions: q.conditions ?? [],
+      weight: Number(q.weight ?? 0),
+      scoring: q.scoring && Object.keys(q.scoring).length ? q.scoring : { mode: "none" },
+      validation,
+      display,
+    };
+  });
 
   const scoringRules = ((sRes.data ?? []) as any[]).map((r) => ({
     industry: r.industry ?? null,

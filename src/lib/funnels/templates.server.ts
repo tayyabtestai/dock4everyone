@@ -23,7 +23,9 @@ function questionRows(calcId: string, t: FunnelTemplate) {
     insight: q.insight ?? "",
     required: q.required,
     options: q.options ?? [],
-    validation: q.validation ?? {},
+    // rr_questions has no `display` column, so persist the UI hint inside the
+    // validation JSON; assembleSnapshot restores it onto the question.
+    validation: { ...(q.validation ?? {}), ...(q.display ? { display: q.display } : {}) },
     conditions: q.conditions ?? [],
     weight: q.weight ?? 0,
     scoring: q.scoring ?? { mode: "none" },
