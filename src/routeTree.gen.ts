@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminEmailRouteImport } from './routes/_authenticated/admin.email'
 import { Route as AuthenticatedAdminFunnelsRouteImport } from './routes/_authenticated/admin.funnels'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminFunnelsIdRouteImport } from './routes/_authenticated/admin.funnels.$id'
 import { Route as AuthenticatedAdminLeadsIndexRouteImport } from './routes/_authenticated/admin.leads.index'
 import { Route as AuthenticatedAdminLeadsIdRouteImport } from './routes/_authenticated/admin.leads.$id'
 import { Route as AuthenticatedAdminLeadsImportRouteImport } from './routes/_authenticated/admin.leads.import'
@@ -138,6 +139,12 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminFunnelsIdRoute =
+  AuthenticatedAdminFunnelsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminFunnelsRoute,
+  } as any)
 const AuthenticatedAdminLeadsIndexRoute =
   AuthenticatedAdminLeadsIndexRouteImport.update({
     id: '/leads/',
@@ -174,9 +181,10 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
-  '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
+  '/admin/funnels': typeof AuthenticatedAdminFunnelsRouteWithChildren
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/funnels/$id': typeof AuthenticatedAdminFunnelsIdRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/admin/leads/': typeof AuthenticatedAdminLeadsIndexRoute
@@ -197,9 +205,10 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/email': typeof AuthenticatedAdminEmailRoute
-  '/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
+  '/admin/funnels': typeof AuthenticatedAdminFunnelsRouteWithChildren
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/funnels/$id': typeof AuthenticatedAdminFunnelsIdRoute
   '/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsIndexRoute
@@ -223,9 +232,10 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/email': typeof AuthenticatedAdminEmailRoute
-  '/_authenticated/admin/funnels': typeof AuthenticatedAdminFunnelsRoute
+  '/_authenticated/admin/funnels': typeof AuthenticatedAdminFunnelsRouteWithChildren
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/funnels/$id': typeof AuthenticatedAdminFunnelsIdRoute
   '/_authenticated/admin/leads/$id': typeof AuthenticatedAdminLeadsIdRoute
   '/_authenticated/admin/leads/import': typeof AuthenticatedAdminLeadsImportRoute
   '/_authenticated/admin/leads/': typeof AuthenticatedAdminLeadsIndexRoute
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/admin/funnels'
     | '/admin/settings'
     | '/admin/'
+    | '/admin/funnels/$id'
     | '/admin/leads/$id'
     | '/admin/leads/import'
     | '/admin/leads/'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/admin/funnels'
     | '/admin/settings'
     | '/admin'
+    | '/admin/funnels/$id'
     | '/admin/leads/$id'
     | '/admin/leads/import'
     | '/admin/leads'
@@ -300,6 +312,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/funnels'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/funnels/$id'
     | '/_authenticated/admin/leads/$id'
     | '/_authenticated/admin/leads/import'
     | '/_authenticated/admin/leads/'
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/funnels/$id': {
+      id: '/_authenticated/admin/funnels/$id'
+      path: '/$id'
+      fullPath: '/admin/funnels/$id'
+      preLoaderRoute: typeof AuthenticatedAdminFunnelsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminFunnelsRoute
+    }
     '/_authenticated/admin/leads/': {
       id: '/_authenticated/admin/leads/'
       path: '/leads'
@@ -488,10 +508,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminFunnelsRouteChildren {
+  AuthenticatedAdminFunnelsIdRoute: typeof AuthenticatedAdminFunnelsIdRoute
+}
+
+const AuthenticatedAdminFunnelsRouteChildren: AuthenticatedAdminFunnelsRouteChildren =
+  {
+    AuthenticatedAdminFunnelsIdRoute: AuthenticatedAdminFunnelsIdRoute,
+  }
+
+const AuthenticatedAdminFunnelsRouteWithChildren =
+  AuthenticatedAdminFunnelsRoute._addFileChildren(
+    AuthenticatedAdminFunnelsRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminEmailRoute: typeof AuthenticatedAdminEmailRoute
-  AuthenticatedAdminFunnelsRoute: typeof AuthenticatedAdminFunnelsRoute
+  AuthenticatedAdminFunnelsRoute: typeof AuthenticatedAdminFunnelsRouteWithChildren
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminLeadsIdRoute: typeof AuthenticatedAdminLeadsIdRoute
@@ -502,7 +536,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminEmailRoute: AuthenticatedAdminEmailRoute,
-  AuthenticatedAdminFunnelsRoute: AuthenticatedAdminFunnelsRoute,
+  AuthenticatedAdminFunnelsRoute: AuthenticatedAdminFunnelsRouteWithChildren,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminLeadsIdRoute: AuthenticatedAdminLeadsIdRoute,

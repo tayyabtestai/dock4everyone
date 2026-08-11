@@ -113,3 +113,40 @@ export const adminPublishFunnel = createServerFn({ method: "POST" })
     await a.assertAdmin(context.supabase, context.userId);
     return s.publishFunnel(context.supabase, data.id, context.userId);
   });
+
+export const adminGetFunnelForEdit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const [b, a] = await Promise.all([import("./builder.server"), import("./admin.server")]);
+    await a.assertAdmin(context.supabase, context.userId);
+    return b.getFunnelForEdit(context.supabase, data.id);
+  });
+
+// Questions/settings are validated by the engine on publish; here we accept the
+// editable structure permissively (admin-only) and let the DB enforce types.
+const SaveSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().trim().min(2).max(160),
+  description: z.string().max(2000).default(""),
+  tagline: z.string().max(300).optional(),
+  slug: z
+    .string()
+    .trim()
+    .min(1)
+    .max(80)
+    .regex(/^[a-z0-9-]+$/, "Slug may contain lowercase letters, numbers and hyphens only"),
+  industries: z.array(z.string().max(120)).max(30).default([]),
+  settings: z.record(z.string(), z.unknown()).default({}),
+  questions: z.array(z.record(z.string(), z.unknown())).max(200).default([]),
+});
+
+export const adminSaveFunnel = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => SaveSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const [b, a] = await Promise.all([import("./builder.server"), import("./admin.server")]);
+    await a.assertAdmin(context.supabase, context.userId);
+    const { id, ...payload } = data;
+    return b.saveFunnel(context.supabase, id, payload as Parameters<typeof b.saveFunnel>[2]);
+  });

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
@@ -35,7 +35,9 @@ import {
   adminSetFunnelStatus,
   adminDuplicateFunnel,
   adminDeleteFunnel,
+  adminInstallTemplate,
 } from "@/lib/funnels/admin.functions";
+import { templateCards } from "@/lib/funnels/templates";
 import {
   FUNNEL_STATUSES,
   FUNNEL_STATUS_LABEL,
@@ -78,12 +80,14 @@ type FunnelListRow = FunnelRow;
 
 function FunnelsPage() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const listFn = useServerFn(adminListFunnels);
   const kpiFn = useServerFn(adminFunnelKpis);
   const createFn = useServerFn(adminCreateFunnel);
   const statusFn = useServerFn(adminSetFunnelStatus);
   const dupFn = useServerFn(adminDuplicateFunnel);
   const delFn = useServerFn(adminDeleteFunnel);
+  const installFn = useServerFn(adminInstallTemplate);
 
   const [tab, setTab] = useState<Tab>("all");
   const [searchDraft, setSearchDraft] = useState("");
@@ -161,6 +165,16 @@ function FunnelsPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+  const installMut = useMutation({
+    mutationFn: (key: string) => installFn({ data: { key, publish: true } }),
+    onSuccess: (r) => {
+      toast.success("Funnel added and published");
+      setShowCreate(false);
+      setSelectedId(r.id);
+      refetchAll();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   function handleAction(
     action: FunnelAction | "duplicate" | "publish" | "unpublish" | "archive" | "restore" | "delete",
@@ -168,11 +182,15 @@ function FunnelsPage() {
   ) {
     switch (action) {
       case "preview":
-        toast.info("The public funnel preview arrives in Phase 2c.");
+        if (f.status === "published") {
+          window.open(`/funnel/${f.slug}`, "_blank", "noopener");
+        } else {
+          toast.info("Publish this funnel to open its live public page.");
+        }
         break;
       case "edit":
       case "more":
-        toast.info("The funnel builder arrives in Phase 2b.");
+        void navigate({ to: "/admin/funnels/$id", params: { id: f.id } });
         break;
       case "duplicate":
         dupMut.mutate(f.id);
@@ -498,8 +516,10 @@ function FunnelsPage() {
       {showCreate && (
         <CreateFunnelModal
           submitting={createMut.isPending}
+          installing={installMut.isPending ? installMut.variables : null}
           onClose={() => setShowCreate(false)}
           onSubmit={(v) => createMut.mutate(v)}
+          onInstall={(key) => installMut.mutate(key)}
         />
       )}
     </div>
@@ -780,6 +800,104 @@ function EmptyState({ hasFunnels, onCreate }: { hasFunnels: boolean; onCreate: (
 }
 
 function CreateFunnelModal({
+  submitting,
+  installing,
+  onClose,
+  onSubmit,
+  onInstall,
+}: {
+  submitting: boolean;
+  installing: string | null;
+  onClose: () => void;
+  onSubmit: (v: {
+    name: string;
+    description: string;
+    industries: string[];
+    status: "draft" | "published";
+    slug: string;
+  }) => void;
+  onInstall: (key: string) => void;
+}) {
+  const [mode, setMode] = useState<"choose" | "scratch">("choose");
+  const cards = templateCards();
+
+  if (mode === "choose") {
+    return (
+      <div
+        className="console fixed inset-0 z-[60] overflow-y-auto bg-ink/30 p-4 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <div
+          className="mx-auto my-8 w-full max-w-3xl rounded-2xl border border-border bg-card p-6 shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="mb-5 flex items-start justify-between">
+            <div>
+              <h2 className="font-serif text-2xl">Create funnel</h2>
+              <p className="text-xs text-muted-foreground">
+                Start from a ready-made template, or build from scratch.
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="grid h-8 w-8 place-items-center rounded-full hover:bg-secondary"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {cards.map((c) => {
+              const busy = installing === c.key;
+              return (
+                <div
+                  key={c.key}
+                  className="flex flex-col rounded-xl border border-border bg-white p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-medium text-ink">{c.name}</h3>
+                    <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      {c.questionCount} Qs
+                    </span>
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>
+                  <p className="mt-2 text-[11px] text-muted-foreground">
+                    <span className="font-medium text-ink/70">Objective:</span> {c.objective}
+                  </p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <button
+                      disabled={!!installing}
+                      onClick={() => onInstall(c.key)}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:opacity-90 disabled:opacity-60"
+                    >
+                      {busy ? "Adding…" : "Use template"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+            <p className="text-xs text-muted-foreground">
+              Templates install fully configured and published, ready to edit.
+            </p>
+            <button
+              onClick={() => setMode("scratch")}
+              className="rounded-full border border-border px-4 py-2 text-sm hover:bg-secondary"
+            >
+              Start from scratch
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <ScratchForm submitting={submitting} onClose={onClose} onSubmit={onSubmit} />;
+}
+
+function ScratchForm({
   submitting,
   onClose,
   onSubmit,
