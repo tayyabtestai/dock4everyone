@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, Link, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, queryOptions, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { fetchPublishedFunnel, logFunnelEvent, funnelSessionId } from "@/lib/funnels/public";
@@ -111,6 +111,7 @@ function FunnelPage() {
   const { data } = useSuspenseQuery(funnelQuery(slug));
   const funnel = data;
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const runSubmit = useServerFn(submitFunnel);
 
   useEffect(() => {
@@ -129,8 +130,10 @@ function FunnelPage() {
         },
       },
     });
-    // Take the customer to their full personalised report.
+    // Seed the report cache so it renders instantly (no read-back), then take
+    // the customer to their full personalised report.
     if (res.submissionId) {
+      qc.setQueryData(["report", res.submissionId], res.report);
       navigate({ to: "/report/$id", params: { id: res.submissionId } });
     }
     return res.result as FunnelResult;
